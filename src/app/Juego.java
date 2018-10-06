@@ -1,6 +1,9 @@
 package app;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
 import elementos.CampoDeFuerza;
 import naves.Enemigo;
@@ -29,8 +32,8 @@ public class Juego {
 	private ArrayList<CampoDeFuerza> camposDeFuerza;
 	
 	public Juego() {
-		this.anchoPantalla = 720;
-		this.largoPamtalla = 1024;
+		this.anchoPantalla = 100;
+		this.largoPamtalla = 30;
 		this.enemigoSpawnX = 4;
 		this.enemigoSpawnY = 26;
 	}
@@ -54,6 +57,44 @@ public class Juego {
 		spawnEnemigos();
 		spawnCamposDeFuerza();
 		jugador.spawn();
+		
+		//Timer
+		// 1000 = 1 seg
+		//*****************************************************************
+		javax.swing.Timer timer = new javax.swing.Timer(500, new ActionListener() { //mueve los enemigos automaticamente cada x segundos
+			public void actionPerformed(ActionEvent e) {
+				for (Enemigo enemigo : enemigos) { //recorremos enemigo por enemigo
+					if(enemigo.getPosicionY() <= jugador.getPosicionY()) { //Si algun enemigo llega a la altura del jugador o menos se termina el juego
+						if(jugador.vidasRestantes() >= 2) { //Si tiene mas de 2 vidas
+							jugador.Reaparecer(); //Pierde una vida y reaparece a todos los enemigos y campos de fuerza
+							
+						} else {
+							terminarJuego();
+							break;
+						}
+					} else if(!estaEnLaPantalla(enemigo.getPosicionX() + 5, enemigo.getPosicionY())) { //mientras del eje x la posicion sea < al ancho
+						for (Enemigo enem : enemigos) { //pasamos el limite movemos a cada enemigo para abajo
+							System.out.print("("+ enem.getPosicionX()+":"+ enem.getPosicionY()+")");
+							enem.setPosicionX(enemigoSpawnX);
+							enem.setPosicionY(enem.getPosicionY() - 5);
+						}
+						System.out.println();
+						break;
+					} else {
+						enemigo.setPosicionX(enemigo.getPosicionX() + 5); //Y si no. movemos al enemigo a la derecha
+					}
+				}
+				if(jugador.vidasRestantes() >= 2) {
+					spawnEnemigos();
+					spawnCamposDeFuerza();	
+				}
+
+			}
+		}
+		);
+		//******************************************************************
+		
+		timer.start();
 	}
 	
 	public void terminarJuego() {
