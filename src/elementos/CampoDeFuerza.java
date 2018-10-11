@@ -31,7 +31,7 @@ public class CampoDeFuerza extends HitBox {
 		if(vida <= 0) this.existe = false;
 	}
 	
-	public boolean existeCampoDeFuerza() {
+	public boolean getExiste() {
 		return existe;
 	}
 }

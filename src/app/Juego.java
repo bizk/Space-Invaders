@@ -63,7 +63,7 @@ public class Juego {
 		//*****************************************************************
 		javax.swing.Timer timer = new javax.swing.Timer(500, new ActionListener() { //mueve los enemigos automaticamente cada x segundos
 			public void actionPerformed(ActionEvent e) {
-				for (Enemigo enemigo : enemigos) { //recorremos enemigo por enemigo
+					for (Enemigo enemigo : enemigos) { //recorremos enemigo por enemigo
 					if(enemigo.getPosicionY() <= jugador.getPosicionY()) { //Si algun enemigo llega a la altura del jugador o menos se termina el juego
 						if(jugador.vidasRestantes() >= 2) { //Si tiene mas de 2 vidas
 							jugador.Reaparecer(); //Pierde una vida y reaparece a todos los enemigos y campos de fuerza
@@ -92,9 +92,10 @@ public class Juego {
 			}
 		}
 		);
+		timer.start();
+
 		//******************************************************************
 		
-		timer.start();
 	}
 	
 	public void terminarJuego() {
@@ -177,17 +178,5 @@ public class Juego {
 			auxX += 15;
 		}
 	}
-	/*
-	public Boolean esEnemigo(HitBox objeto) {
-		while
-	}
-	
-	public Boolean esCampoDeFuerza(HitBox objeto) {
-		
-	}
-	
-	public Boolean esJugador(HitBox objeto) {
-		jugador
-	}
-	*/
+
 }
