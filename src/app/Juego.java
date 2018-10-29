@@ -2,10 +2,14 @@ package app;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.*;
 
 import elementos.CampoDeFuerza;
+import elementos.HitBox;
+import elementos.Proyectil;
 import naves.Enemigo;
 import naves.Jugador;
 
@@ -30,10 +34,12 @@ public class Juego {
 	private int enemigoSpawnY;
 	private ArrayList<Enemigo> enemigos;
 	private ArrayList<CampoDeFuerza> camposDeFuerza;
+	private Collection<HitBox> listaColisiones;
+	private Collection<Proyectil> listaProyectiles;
 	
 	public Juego() {
-		this.anchoPantalla = 100;
-		this.largoPamtalla = 30;
+		this.anchoPantalla = 500 ;
+		this.largoPamtalla = 644;
 		this.enemigoSpawnX = 4;
 		this.enemigoSpawnY = 26;
 	}
@@ -51,12 +57,14 @@ public class Juego {
 	// ###########################
 	
 	public void nuevoJuego() {
-		this.jugador = new Jugador("PLAYER 1", 0, 0);
+		this.jugador = new Jugador(0, 0);
 		enemigos = new ArrayList<Enemigo>();
 		camposDeFuerza = new ArrayList<CampoDeFuerza>();
+		listaColisiones = new ArrayList<HitBox>();
+		listaProyectiles = new ArrayList<Proyectil>();
 		spawnEnemigos();
 		spawnCamposDeFuerza();
-		jugador.spawn();
+		jugador.spawn(0, 0);
 		
 		//Timer
 		// 1000 = 1 seg
@@ -102,6 +110,8 @@ public class Juego {
 		//Elimina los enemigos y campos de fuerza
 		enemigos.clear();
 		camposDeFuerza.clear();
+		listaColisiones.clear();
+		listaProyectiles.clear();
 		
 		System.out.println("Termino el Juego");
 		System.out.println("Tu puntaje fue de: " + this.jugador.getPuntaje() + "pts");
@@ -117,8 +127,15 @@ public class Juego {
 		this.nivel++;
 		spawnEnemigos();
 		spawnCamposDeFuerza();
-		int aux = this.jugador.getPuntaje();
-		this.jugador.setPuntaje(aux + 500);
+		jugador.recibirPuntos(500);
+	}
+	
+	public void moverJugadorIzq() {
+		jugador.moverseEjeX(-1);
+	}
+
+	public void moverJugadorDer() {
+		jugador.moverseEjeX(1);
 	}
 	
 	/**
@@ -146,15 +163,17 @@ public class Juego {
 
 		//La funcion itera durante 15 veces y cada 5 enemigos, baja un lugar en y para formar filas
 		for(int i = 0; i < 15; i++) {
+			int enemigoSpawnXx = 4;
+			int enemigoSpawnYy = 26;
 			if(i == 0) {
-				auxX = enemigoSpawnX;
-				auxY = enemigoSpawnY;
+				auxX = enemigoSpawnXx;
+				auxY = enemigoSpawnYy;
 			} else if(i == 5) {
-				auxX = enemigoSpawnX;
-				auxY = enemigoSpawnY - 5;
+				auxX = enemigoSpawnXx;
+				auxY = enemigoSpawnYy - 5;
 			} else if(i == 10) {
-				auxX = enemigoSpawnX;
-				auxY = enemigoSpawnY - 10;
+				auxX = enemigoSpawnXx;
+				auxY = enemigoSpawnYy - 10;
 			}
 			Enemigo enemigo = new Enemigo(auxX, auxY);
 			enemigos.add(enemigo);
@@ -179,4 +198,21 @@ public class Juego {
 		}
 	}
 
+	//###############################################
+	public void dispararJugador() {
+		listaProyectiles.add(jugador.disparar());
+	}
+	//##############################################333
+	
+	public boolean hayEnemigos() {
+		if(enemigos.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	private void eliminarHitBox() {
+		
+	}
 }

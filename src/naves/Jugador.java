@@ -14,13 +14,11 @@ package naves;
 
 
 public class Jugador extends Nave {
-	private String nombre;
 	private int puntaje;
 	private int vida;
 	
-	public Jugador(String nom, int x, int y) {
+	public Jugador(int x, int y) {
 		super(4, 4, x, y);
-		this.nombre = nom;
 		this.vivo = true;
 		this.vida = 3;
 		this.puntaje = 0;
@@ -28,14 +26,22 @@ public class Jugador extends Nave {
 	
 	//Trabajar sobre esto
 	public void Reaparecer() {
-		if(vida > 1) {
+		if(this.vida > 1) {
 			this.vida--;
 			this.vivo = true;
 		}
 	}
 	
 	public int vidasRestantes() {
-		return vida;
+		return this.vida;
+	}
+	
+	public void restarVida() {
+		this.vida = this.vida - 1;
+	}
+	
+	public void recibirPuntos(int puntos) {
+		this.puntaje += puntos;
 	}
 
 	public int getPuntaje() {
