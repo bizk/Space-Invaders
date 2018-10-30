@@ -7,7 +7,7 @@ import app.Juego;
 public class pruebasMixtas {
 	// Test 01 - leer teclado de forma continua
 	public static void main(String[] args) {
-		Juego juego = new Juego();
+		Juego juego = Juego.getInstancia();
 		juego.nuevoJuego();
 		
 		Scanner scanner = new Scanner(System.in);	

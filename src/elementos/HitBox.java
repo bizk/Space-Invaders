@@ -15,14 +15,18 @@ public class HitBox {
 	private int alto;
 	private int posicionX;
 	private int posicionY;
+	private boolean impactada;
 
 	public HitBox(int an, int al, int x, int y) {
 		this.ancho = an;
 		this.alto = al;
 		this.posicionX = x;
 		this.posicionY = y;
+		impactada = false;
 	}
 
+	
+	
 	public int getPosicionX() {
 		return posicionX;
 	}

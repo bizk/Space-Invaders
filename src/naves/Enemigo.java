@@ -11,19 +11,22 @@ package naves;
 //
 
 public class Enemigo extends Nave {
+	@SuppressWarnings("unused")
 	private int velocidadNave;
 
 	public Enemigo(int x, int y) {
-		super(4,4, x, y);
+		super(4, 4, x, y);
 		this.velocidadNave = 10;		
 		this.vivo = true;
 	}
-	
-	// /////////////////////////////
 
-	/*public Void darPuntos(Jugador jugador) {
-		ESTE ME PARECE QUE NO VA ACA
-	}*/
+	public void darPuntos(Jugador jugador) {
+		jugador.recibirPuntos(15);
+	}
+	
+	public void moverseEjeY(int y) {
+		super.setPosicionY(y);
+	}
 	
 	public void aumentarVelocidad(int vel) {
 		this.velocidadNave += vel;

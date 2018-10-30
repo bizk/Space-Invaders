@@ -15,30 +15,28 @@ package elementos;
 
 public class Proyectil extends HitBox {
 	private int velocidadProyectil;
-	private int direccionProyectilX;
 	private int direccionProyectilY;
 	
-	public Proyectil(int x, int y) {
+	public Proyectil(int x,int y) {
 		super(1, 2, x, y);
-		velocidadProyectil = 5;
-		direccionProyectilX = x;
-		direccionProyectilY = y;
+		this.velocidadProyectil = 5;
+		this.direccionProyectilY = y;
 	}
 	
-	public void trayectoria(boolean arriba) {
-		if(arriba) {
-			direccionProyectilY++;
+	public void destruir() {
+	
+	}
+	
+	public boolean hayEncuentro(HitBox objetivo) {
+		if(objetivo.getPosicionX() == super.getPosicionX() && objetivo.getPosicionY() == super.getPosicionY()) {
+			return true;
 		} else {
-			direccionProyectilY--;
+			return false;
 		}
 	}
 	
-	/*
-	public Void destruir() {
-	
-	}*/
-	
-	public boolean hayEncuentro(HitBox objetivo) {
-		return false;
+	public void moverProyectil() {
+		this.direccionProyectilY += this.velocidadProyectil;
+		super.setPosicionY(this.direccionProyectilY);
 	}
 }
