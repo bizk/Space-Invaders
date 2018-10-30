@@ -2,10 +2,15 @@ package app;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.*;
 
 import elementos.CampoDeFuerza;
+import elementos.HitBox;
+import elementos.Proyectil;
+import grafico.ventana;
 import naves.Enemigo;
 import naves.Jugador;
 
@@ -28,12 +33,18 @@ public class Juego {
 	private int largoPamtalla;
 	private int enemigoSpawnX;
 	private int enemigoSpawnY;
+	private boolean movimientoInverso;
 	private ArrayList<Enemigo> enemigos;
 	private ArrayList<CampoDeFuerza> camposDeFuerza;
+	private Collection<HitBox> listaColisiones;
+	private Collection<Proyectil> listaProyectiles;
+	private int TIEMPO_MOVIMIENTO_ENEMIGOS;
 	
-	public Juego() {
-		this.anchoPantalla = 100;
-		this.largoPamtalla = 30;
+	private static Juego instancia;
+	
+	private Juego() {
+		this.anchoPantalla = 500 ;
+		this.largoPamtalla = 644;
 		this.enemigoSpawnX = 4;
 		this.enemigoSpawnY = 26;
 	}
@@ -51,49 +62,80 @@ public class Juego {
 	// ###########################
 	
 	public void nuevoJuego() {
-		this.jugador = new Jugador("PLAYER 1", 0, 0);
+		this.jugador = new Jugador(0, 0);
 		enemigos = new ArrayList<Enemigo>();
 		camposDeFuerza = new ArrayList<CampoDeFuerza>();
+		listaColisiones = new ArrayList<HitBox>();
+		listaProyectiles = new ArrayList<Proyectil>();
 		spawnEnemigos();
 		spawnCamposDeFuerza();
-		jugador.spawn();
+		jugador.spawn(this.anchoPantalla/2 - 100, this.largoPamtalla - 100);
+		this.TIEMPO_MOVIMIENTO_ENEMIGOS = 1000;
+		
+		ventana v = new ventana();
 		
 		//Timer
 		// 1000 = 1 seg
 		//*****************************************************************
-		javax.swing.Timer timer = new javax.swing.Timer(500, new ActionListener() { //mueve los enemigos automaticamente cada x segundos
+		javax.swing.Timer timer = new javax.swing.Timer(TIEMPO_MOVIMIENTO_ENEMIGOS, new ActionListener() { //mueve los enemigos automaticamente cada x segundos
 			public void actionPerformed(ActionEvent e) {
-					for (Enemigo enemigo : enemigos) { //recorremos enemigo por enemigo
-					if(enemigo.getPosicionY() <= jugador.getPosicionY()) { //Si algun enemigo llega a la altura del jugador o menos se termina el juego
-						if(jugador.vidasRestantes() >= 2) { //Si tiene mas de 2 vidas
-							jugador.Reaparecer(); //Pierde una vida y reaparece a todos los enemigos y campos de fuerza
-							
+				boolean chocaPared = false;
+				
+				//Aca chequeamos si toco con una pared, y si tiene que invertir el movimiento
+				for (Enemigo enemigo : enemigos) 
+					if (enemigo.getPosicionX() >= anchoPantalla - 39) {
+						movimientoInverso = true; 
+						chocaPared = true;
+					} else if (enemigo.getPosicionX() <= 6) {
+						movimientoInverso = false; 
+						chocaPared = true;
+					}
+				
+				//Si alguno de los enemigos choco una pared (por ende todos deben moverse) vemos cual y realizamos la accion correspondiente
+				if(chocaPared) {
+					for(Enemigo enemigo : enemigos) {
+						if(movimientoInverso) {
+							enemigo.setPosicionX(enemigo.getPosicionX() - 36);
 						} else {
+							enemigo.setPosicionX(enemigo.getPosicionX() + 36);
+						}
+						enemigo.setPosicionY(enemigo.getPosicionY() + 36);
+					}
+					chocaPared = false;
+				}
+				
+				for (Enemigo enemigo : enemigos) { 
+					if(enemigo.getPosicionY() >= jugador.getPosicionY()) { //Si algun enemigo llega a la altura del jugador o menos se termina el juego
+						/*if(jugador.vidasRestantes() >= 2) { //Si tiene mas de 2 vidas
+							jugador.Reaparecer(); //Pierde una vida y reaparece a todos los enemigos y campos de fuerza
+						} else {*/
 							terminarJuego();
 							break;
-						}
-					} else if(!estaEnLaPantalla(enemigo.getPosicionX() + 5, enemigo.getPosicionY())) { //mientras del eje x la posicion sea < al ancho
+						//}
+					} /*else if(!estaEnLaPantalla(enemigo.getPosicionX() + 32, enemigo.getPosicionY()+32)) { //mientras del eje x la posicion sea < al ancho
 						for (Enemigo enem : enemigos) { //pasamos el limite movemos a cada enemigo para abajo
 							System.out.print("("+ enem.getPosicionX()+":"+ enem.getPosicionY()+")");
 							enem.setPosicionX(enemigoSpawnX);
-							enem.setPosicionY(enem.getPosicionY() - 5);
+							enem.setPosicionY(enem.getPosicionY() + 36);
 						}
 						System.out.println();
 						break;
-					} else {
-						enemigo.setPosicionX(enemigo.getPosicionX() + 5); //Y si no. movemos al enemigo a la derecha
+					} */else {
+						if(movimientoInverso) enemigo.moverseEjeX(-60);
+						else enemigo.moverseEjeX(60); //Y si no. movemos al enemigo a la derecha
 					}
 				}
+					/*
 				if(jugador.vidasRestantes() >= 2) {
 					spawnEnemigos();
 					spawnCamposDeFuerza();	
 				}
-
+				*/
 			}
 		}
 		);
 		timer.start();
-
+		
 		//******************************************************************
 		
 	}
@@ -102,6 +144,8 @@ public class Juego {
 		//Elimina los enemigos y campos de fuerza
 		enemigos.clear();
 		camposDeFuerza.clear();
+		listaColisiones.clear();
+		listaProyectiles.clear();
 		
 		System.out.println("Termino el Juego");
 		System.out.println("Tu puntaje fue de: " + this.jugador.getPuntaje() + "pts");
@@ -117,8 +161,15 @@ public class Juego {
 		this.nivel++;
 		spawnEnemigos();
 		spawnCamposDeFuerza();
-		int aux = this.jugador.getPuntaje();
-		this.jugador.setPuntaje(aux + 500);
+		jugador.recibirPuntos(500);
+	}
+	
+	public void moverJugadorIzq() {
+		jugador.moverseEjeX(-1);
+	}
+
+	public void moverJugadorDer() {
+		jugador.moverseEjeX(1);
 	}
 	
 	/**
@@ -143,22 +194,25 @@ public class Juego {
 	private void spawnEnemigos() {
 		int auxX = enemigoSpawnX; //De donde se va a ubicar el primer enemigo en el eje X
 		int auxY = enemigoSpawnY; //De donde se va a ubicar el primer enemigo en el eje y
-
+		this.movimientoInverso = false; //Como los spawneamos por primera vez, van a moverse de izquierda a derecha.
+		
 		//La funcion itera durante 15 veces y cada 5 enemigos, baja un lugar en y para formar filas
 		for(int i = 0; i < 15; i++) {
+			int enemigoSpawnXx = 6;
+			int enemigoSpawnYy = 6;
 			if(i == 0) {
-				auxX = enemigoSpawnX;
-				auxY = enemigoSpawnY;
+				auxX = enemigoSpawnXx;
+				auxY = enemigoSpawnYy;
 			} else if(i == 5) {
-				auxX = enemigoSpawnX;
-				auxY = enemigoSpawnY - 5;
+				auxX = enemigoSpawnXx;
+				auxY = enemigoSpawnYy + 36;
 			} else if(i == 10) {
-				auxX = enemigoSpawnX;
-				auxY = enemigoSpawnY - 10;
+				auxX = enemigoSpawnXx;
+				auxY = enemigoSpawnYy + 69;
 			}
 			Enemigo enemigo = new Enemigo(auxX, auxY);
 			enemigos.add(enemigo);
-			auxX += 5;
+			auxX += 36;
 		}		
 	}
 
@@ -179,4 +233,44 @@ public class Juego {
 		}
 	}
 
+	//###############################################
+	public void dispararJugador() {
+		listaProyectiles.add(jugador.disparar());
+	}
+	//##############################################333
+	
+	public boolean hayEnemigos() {
+		if(enemigos.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	private void eliminarHitBox() {
+		
+	}
+	
+	public static Juego getInstancia() {
+		if(instancia == null) instancia = new Juego();
+		return instancia;
+	}
+	public List<Enemigo> getEnemigos() {
+		return this.enemigos;
+	}
+	public Jugador getJugador() {
+		return this.jugador;
+	}
+
+	public int getAnchoPantalla() {
+		return anchoPantalla;
+	}
+
+	public int getLargoPamtalla() {
+		return largoPamtalla;
+	}
+	
+	public int getTIEMPO_MOVIMIENTO_ENEMIGOS() {
+		return TIEMPO_MOVIMIENTO_ENEMIGOS;
+	}
 }

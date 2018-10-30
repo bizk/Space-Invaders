@@ -1,4 +1,5 @@
 package naves;
+import app.Juego;
 import elementos.HitBox;
 import elementos.Proyectil;
 
@@ -30,19 +31,20 @@ public abstract class Nave extends HitBox {
 	public Proyectil disparar() {
 		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY());
 		return proyectil;
-				//Falta el lugar de inciio del proyectil
 	}
 	
-	/*
-	public Void moverse() {
-	
+	public void moverseEjeX(int x) {
+		//ESTO NO ESTA BIEN
+		super.setPosicionX(super.getPosicionX() + x);
 	}
-	*/
+	
 	public void morir() {
 		this.vivo = false;
 	}
 	
-	public void spawn() {
+	public void spawn(int posicionX, int posicionY) {
+		super.setPosicionX(posicionX);
+		super.setPosicionY(posicionY);
 		this.vivo = true;
 	}
 	
