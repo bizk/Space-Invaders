@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import app.Juego;
+import elementos.CampoDeFuerza;
 import naves.Enemigo;
 
 
@@ -27,9 +28,9 @@ public class ventana extends JFrame {
 	private JLabel naveEnemiga2;
 	private JLabel naveEnemiga3;
 	private JLabel naveJugador;
-	private JLabel camposFuerza;
 	private Container c;
 	private ArrayList<JLabel> enemigosJL;
+	private ArrayList<JLabel> ListMuro;
 	
 	public ventana(){
 		c = this.getContentPane();
@@ -64,6 +65,16 @@ public class ventana extends JFrame {
 		MovimientoEnemigo movEnem = new MovimientoEnemigo();
 		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
 		timer.start();
+		
+		ListMuro= new ArrayList<JLabel>();
+		
+		for(CampoDeFuerza pared: Juego.getInstancia().getCampo()) {
+			JLabel muro= new JLabel(new ImageIcon ("muroMedio.png"));
+			muro.setBounds(pared.getPosicionX(),pared.getPosicionY(),32,32);
+			ListMuro.add(muro);
+			muro.setVisible(true);
+			c.add(muro);
+		}
 	}
 	
 	class EventoTeclas implements KeyListener{
@@ -122,10 +133,7 @@ public class ventana extends JFrame {
 		c = this.getContentPane();
 		
 		c.setBackground(Color.BLACK);
-		ImageIcon enemigo1 = new ImageIcon("enemigoA.png");
-		ImageIcon enemigo2 = new ImageIcon("enemigoB.png");
-		ImageIcon enemigo3 = new ImageIcon("enemigoC.png");
-		ImageIcon nave = new ImageIcon("nave.png");
+	
 		
 		/*
 		 for(int i=0;i<50;i++){ //spawn PRUEBA SEGUNDA FILA

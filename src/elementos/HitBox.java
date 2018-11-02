@@ -22,7 +22,7 @@ public class HitBox {
 		this.alto = al;
 		this.posicionX = x;
 		this.posicionY = y;
-		impactada = false;
+		setImpactada(false);
 	}
 
 	
@@ -41,6 +41,28 @@ public class HitBox {
 
 	public void setPosicionY(int posicionY) {
 		this.posicionY = posicionY;
+	}
+
+
+
+	public boolean isImpactada() {
+		return impactada;
+	}
+
+
+
+	public void setImpactada(boolean impactada) {
+		this.impactada = impactada;
+	}
+
+
+
+	public int getAncho() {
+		return ancho;
+	}
+
+	public int getAlto() {
+		return alto;
 	}
 	
 	
