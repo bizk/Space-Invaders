@@ -39,4 +39,16 @@ public class Proyectil extends HitBox {
 		this.direccionProyectilY += this.velocidadProyectil;
 		super.setPosicionY(this.direccionProyectilY);
 	}
+	/*
+	public int moverProyectilAmigo() throws InterruptedException {
+		
+		int pos;
+		pos=super.getPosicionY();
+		
+		pos=pos-16;
+		Thread.sleep(4000);
+		return pos;
+		
+	}
+	*/
 }

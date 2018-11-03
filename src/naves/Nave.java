@@ -1,4 +1,5 @@
 package naves;
+import app.Juego;
 import elementos.HitBox;
 import elementos.Proyectil;
 
@@ -32,9 +33,9 @@ public abstract class Nave extends HitBox {
 		return proyectil;
 	}
 	
-	public void moverseEjeX(int posicionX) {
+	public void moverseEjeX(int x) {
 		//ESTO NO ESTA BIEN
-		super.setPosicionX(super.getPosicionX() + posicionX);
+		super.setPosicionX(super.getPosicionX() + x);
 	}
 	
 	public void morir() {

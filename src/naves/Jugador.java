@@ -10,8 +10,7 @@ package naves;
 //
 //
 
-
-
+import app.Juego;
 
 public class Jugador extends Nave {
 	private int puntaje;
@@ -30,6 +29,14 @@ public class Jugador extends Nave {
 			this.vida--;
 			this.vivo = true;
 		}
+	}
+	
+	@Override
+	public void moverseEjeX(int x) {
+		//ESTO NO ESTA BIEN
+		if(Juego.getInstancia().estaEnLaPantalla(super.getPosicionX() + x, super.getPosicionY()))
+			if(super.getPosicionX() + x + 32<= Juego.getInstancia().getAnchoPantalla())
+				super.setPosicionX(super.getPosicionX() + x);
 	}
 	
 	public int vidasRestantes() {

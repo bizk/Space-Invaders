@@ -6,14 +6,15 @@ import app.Juego;
 
 public class pruebasMixtas {
 	// Test 01 - leer teclado de forma continua
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		Juego juego = new Juego();
+		Juego juego = Juego.getInstancia();
 		juego.nuevoJuego();
 		
 		Scanner scanner = new Scanner(System.in);	
 		while(true) {
-			System.out.println("Escribi algo mono:");
-			String input = scanner.nextLine();
+			
+		String input = scanner.nextLine();
 			juego.movimientoJugador(input);
 			if("q".equals(input)) {
 				juego.terminarJuego();

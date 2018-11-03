@@ -1,7 +1,7 @@
 package tests;
 
 import grafico.ventana;
-
+/*
 public class TestVentana {
 
 	public static void main(String[] args) {
@@ -11,3 +11,4 @@ public class TestVentana {
 	}
 
 }
+*/

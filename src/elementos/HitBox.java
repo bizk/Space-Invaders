@@ -25,8 +25,7 @@ public class HitBox {
 		impactada = false;
 	}
 
-	
-	
+
 	public int getPosicionX() {
 		return posicionX;
 	}
@@ -43,5 +42,14 @@ public class HitBox {
 		this.posicionY = posicionY;
 	}
 	
+	
+	public void setImpactada(boolean impactada) {
+		this.impactada=impactada;//no se si esta bien
+	}
+	
+	
+	public boolean getImpactada() {
+		return impactada;//no se si esta bien
+	}
 	
 }
