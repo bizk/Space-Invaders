@@ -91,20 +91,34 @@ public class ventana extends JFrame {
 				JLabel disparo = new JLabel(proyectilx);
 				
 				int Dx=Juego.getInstancia().getJugador().getPosicionX()+9;
-				int Dy=Juego.getInstancia().getJugador().getPosicionY()-16; //Arreglar esto
-				
+				int Dy=Juego.getInstancia().getJugador().getPosicionY()-16;
+				c.add(disparo);
+				//Arreglar esto
+			Thread atr=new Thread();
+		 try {
+				 while(Dy>(-600)) {
+					 Thread.sleep(50);
+						 Dy=Dy-60;
+						 disparo.setBounds(Dx,Dy ,16, 16);
+						 c.add(disparo);
+							c.repaint();
+							
+							System.out.println("Disparado"+Dy);//culpa de macri
+		 }
+			 }
+			 catch(Exception t){}
 			Proyectil proyectil=new Proyectil(Dx, Dy);
 			
 				
-				disparo.setBounds(Dx,Dy ,16, 16);
-				c.add(disparo);
+			//	disparo.setBounds(Dx,Dy ,16, 16);
+				//c.add(disparo);
 				System.out.println("Disparo");
 				
-			if(Juego.getInstancia().estaEnLaPantalla(Dx, Dy)==false) {
-				c.remove(disparo);
-				c.validate();
-				c.repaint();
-				}
+	//		if(Juego.getInstancia().estaEnLaPantalla(Dx, Dy)==false) {
+		//		c.remove(disparo);
+			//	c.validate();
+			//	c.repaint();
+			//	}
 				
 				c.repaint();
 			}
@@ -124,6 +138,9 @@ public class ventana extends JFrame {
 			
 		}
 	}
+	
+	
+	
 	
 	class MovimientoEnemigo implements ActionListener {
 		@Override
