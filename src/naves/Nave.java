@@ -28,8 +28,8 @@ public abstract class Nave extends HitBox {
 		this.vivo = true;
 	}
 	
-	public Proyectil disparar() {
-		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY());
+	public Proyectil disparar(int direccion) {
+		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY(),direccion);
 		return proyectil;
 	}
 	

@@ -15,14 +15,21 @@ package elementos;
 
 public class Proyectil extends HitBox {
 	private int velocidadProyectil;
-	private int direccionProyectilY;
+	private int direccionProyectilY; //Positivo si la dispara un enemigo, negativo si la dispara el jugador
 	
-	public Proyectil(int x,int y) {
-		super(1, 2, x, y);
-		this.velocidadProyectil = 5;
-		this.direccionProyectilY = y;
+	
+	public Proyectil(int x,int y, int direccion) {
+		super(5, 20, x+15, y); //crea la hitbox del proyectil
+		this.velocidadProyectil = 20;
+		this.direccionProyectilY = direccion;
 	}
 	
+	public int getVelocidad() {
+		return this.velocidadProyectil;
+	}
+	public int getDireccion() {
+		return this.direccionProyectilY;
+	}
 	public void destruir() {
 	
 	}
@@ -35,8 +42,4 @@ public class Proyectil extends HitBox {
 		}
 	}
 	
-	public void moverProyectil() {
-		this.direccionProyectilY += this.velocidadProyectil;
-		super.setPosicionY(this.direccionProyectilY);
-	}
 }

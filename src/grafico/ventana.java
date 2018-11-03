@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import app.Juego;
+import elementos.CampoDeFuerza;
+import elementos.Proyectil;
 import naves.Enemigo;
 
 
@@ -27,9 +29,10 @@ public class ventana extends JFrame {
 	private JLabel naveEnemiga2;
 	private JLabel naveEnemiga3;
 	private JLabel naveJugador;
-	private JLabel camposFuerza;
 	private Container c;
 	private ArrayList<JLabel> enemigosJL;
+	private ArrayList<JLabel> ListMuro;
+	private ArrayList<JLabel> ListProy;
 	
 	public ventana(){
 		c = this.getContentPane();
@@ -64,6 +67,38 @@ public class ventana extends JFrame {
 		MovimientoEnemigo movEnem = new MovimientoEnemigo();
 		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
 		timer.start();
+		
+		ListMuro= new ArrayList<JLabel>();
+		
+		for(CampoDeFuerza pared: Juego.getInstancia().getCampo()) {
+			JLabel muro= new JLabel(new ImageIcon ("muroMedio.png"));
+			muro.setBounds(pared.getPosicionX(),pared.getPosicionY(),32,32);
+			ListMuro.add(muro);
+			muro.setVisible(true);
+			c.add(muro);
+		}
+		
+		ListProy= new ArrayList<JLabel>();
+		ManejoDisparo mandis = new ManejoDisparo();
+		Timer timer2 = new Timer(200,mandis);
+		timer2.start();
+	
+		
+	}
+	class ManejoDisparo implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Juego.getInstancia().moverProyectiles();
+			Iterator<JLabel> itproy= ListProy.iterator();
+			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
+				JLabel aux= (JLabel) itproy.next();
+				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
+								
+			
+			}
+			
+		}
 	}
 	
 	class EventoTeclas implements KeyListener{
@@ -80,6 +115,14 @@ public class ventana extends JFrame {
 				naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
 				System.out.println(Juego.getInstancia().getJugador().getPosicionX());
 			} 
+			if(tecla==KeyEvent.VK_SPACE) {
+				Juego.getInstancia().dispararJugador();
+				JLabel misil = new JLabel(new ImageIcon("misil.png"));
+				misil.setVisible(true);
+				ListProy.add(misil);
+				c.add(misil);
+				
+			}
 			if (tecla == KeyEvent.VK_ESCAPE) System.out.println("Juego terminado");
 		}
 
@@ -95,7 +138,7 @@ public class ventana extends JFrame {
 			
 		}
 	}
-	
+
 	class MovimientoEnemigo implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -109,8 +152,9 @@ public class ventana extends JFrame {
 				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
 			}
 		}
-		
 	}
+	
+	
 	
 	private void eventos() {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -122,10 +166,7 @@ public class ventana extends JFrame {
 		c = this.getContentPane();
 		
 		c.setBackground(Color.BLACK);
-		ImageIcon enemigo1 = new ImageIcon("enemigoA.png");
-		ImageIcon enemigo2 = new ImageIcon("enemigoB.png");
-		ImageIcon enemigo3 = new ImageIcon("enemigoC.png");
-		ImageIcon nave = new ImageIcon("nave.png");
+	
 		
 		/*
 		 for(int i=0;i<50;i++){ //spawn PRUEBA SEGUNDA FILA
@@ -160,5 +201,6 @@ public class ventana extends JFrame {
 		
 		
 	}
+
 
 }
