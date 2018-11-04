@@ -19,6 +19,7 @@ import app.Juego;
 import elementos.CampoDeFuerza;
 import elementos.Proyectil;
 import naves.Enemigo;
+import naves.Nave;
 
 
 public class ventana extends JFrame {
@@ -83,6 +84,46 @@ public class ventana extends JFrame {
 		Timer timer2 = new Timer(200,mandis);
 		timer2.start();
 	
+		ManejoColisiones mancol = new ManejoColisiones();
+		Timer timer3 = new Timer(200, mancol);
+		timer3.start();
+		
+		DisparoEnemigo DisparoEnem=new DisparoEnemigo();
+		Timer timer4=new Timer(200,DisparoEnem);
+		timer4.start();
+		
+	
+		
+	}
+	class DisparoEnemigo implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+		
+		
+		//	Iterator<JLabel> itproy= ListProy.iterator();
+			
+		//	for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
+				
+					Juego.getInstancia().dispararEnemigo();
+					JLabel misilEnem=new JLabel(new ImageIcon("misil.png"));
+					ListProy.add(misilEnem);
+					c.add(misilEnem);
+	 			
+				c.repaint();
+				
+			//}
+		}
+		}
+	class ManejoColisiones implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			Juego.getInstancia().chequearImpactos();
+			//Acá debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
+			//Juego.getInstancia().eliminarImpactados();
+		}
 		
 	}
 	class ManejoDisparo implements ActionListener{
@@ -93,8 +134,13 @@ public class ventana extends JFrame {
 			Iterator<JLabel> itproy= ListProy.iterator();
 			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
 				JLabel aux= (JLabel) itproy.next();
+				if(!tiro.isImpactada()) {
 				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
-								
+				aux.setVisible(true);
+				}else {
+					aux.setVisible(false);
+					c.remove(aux);
+				}
 			
 			}
 			
@@ -108,17 +154,16 @@ public class ventana extends JFrame {
 			if(tecla == KeyEvent.VK_LEFT) {
 				Juego.getInstancia().getJugador().moverseEjeX(-5);
 				naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
-				System.out.println(Juego.getInstancia().getJugador().getPosicionX());
+				//System.out.println(Juego.getInstancia().getJugador().getPosicionX());
 			}
 			if (tecla == KeyEvent.VK_RIGHT) {
 				Juego.getInstancia().getJugador().moverseEjeX(5);
 				naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
-				System.out.println(Juego.getInstancia().getJugador().getPosicionX());
+				//System.out.println(Juego.getInstancia().getJugador().getPosicionX());
 			} 
 			if(tecla==KeyEvent.VK_SPACE) {
 				Juego.getInstancia().dispararJugador();
 				JLabel misil = new JLabel(new ImageIcon("misil.png"));
-				misil.setVisible(true);
 				ListProy.add(misil);
 				c.add(misil);
 				
@@ -146,10 +191,14 @@ public class ventana extends JFrame {
 			int x, y;
 			Iterator<JLabel> itr = enemigosJL.iterator();
 			for (Enemigo enemigo : Juego.getInstancia().getEnemigos()) {
-				System.out.print("- x:" + enemigo.getPosicionX());
-				System.out.println();
 				JLabel enemigoLabel = itr.next();
+				if(!enemigo.isImpactada()) {
+				//System.out.print("- x:" + enemigo.getPosicionX());
+				//System.out.println();
 				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
+				} else {	
+				enemigoLabel.setVisible(false);
+				}
 			}
 		}
 	}

@@ -60,7 +60,59 @@ public class Juego {
 		System.out.println("[" + jugador.getPosicionX() + ":" + jugador.getPosicionY() + "]");
 	}
 	// ###########################
-	
+	public void chequearImpactos() {
+		for(Proyectil tiro : listaProyectiles) {
+			if(tiro.getPosicionY()<0|| tiro.getPosicionY()>644)
+				tiro.setImpactada(true);
+			if(!tiro.isImpactada()) {
+				for(Enemigo enem : enemigos) { //Verifica la lista de enemigos
+					if(!tiro.isImpactada() && enem.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
+						enem.setImpactada(true);
+						tiro.setImpactada(true);
+						enem.darPuntos(this.jugador);
+						System.out.println("Enemigo impactado");
+					}
+				}
+			}
+		if(!tiro.isImpactada()) {
+			for(CampoDeFuerza muro : camposDeFuerza) {
+				if(!tiro.isImpactada()&&muro.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
+					muro.serDanado(10);
+					tiro.setImpactada(true);
+					System.out.println("Muro Impactado");
+				}
+			}
+		}
+			if(!tiro.isImpactada()&&jugador.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())) {
+				jugador.restarVida();
+				tiro.setImpactada(true);
+				System.out.println("JugadorImpactado");
+			}
+		}
+	}
+	/*public void eliminarImpactados() {
+		// TODO Auto-generated method stub
+		for(Proyectil aux : listaProyectiles) {
+			if(aux.isImpactada()) {
+				listaProyectiles.remove(aux);
+				System.out.println("Proyectil Eliminado");
+			}
+		}
+		for(Enemigo aux : enemigos) {
+			if(aux.isImpactada()) {
+				enemigos.remove(aux);
+				System.out.println("Nave enemiga Eliminado");
+			}
+		}
+		for(CampoDeFuerza aux : camposDeFuerza) {
+			if(aux.isImpactada())
+				camposDeFuerza.remove(aux);
+				System.out.println("Proyectil Eliminado");
+		}
+		if(this.jugador.vidasRestantes()==0) {
+			terminarJuego();
+		}
+	}*/
 	public void nuevoJuego() {
 		this.jugador = new Jugador(0, 0);
 		enemigos = new ArrayList<Enemigo>();
@@ -140,34 +192,7 @@ public class Juego {
 		//******************************************************************
 		
 	}
-	public void chequearImpactos() {
-		for(Proyectil tiro : listaProyectiles) {
-			for(Enemigo enem : enemigos) {
-				if(!tiro.isImpactada()&&(tiro.getPosicionX()>=enem.getPosicionX()&&tiro.getPosicionX()<=enem.getPosicionX()+enem.getAncho())&&(tiro.getPosicionY()<=enem.getPosicionY()&&tiro.getPosicionY()>=enem.getPosicionY()+enem.getAlto())){
-					enem.setImpactada(true);
-					tiro.setImpactada(true);
-					enem.darPuntos(this.jugador);
-					enem.morir();
-					tiro.destruir(); 
-					
-				}
-			}
-		
-			for(CampoDeFuerza muro : camposDeFuerza) {
-				if(!tiro.isImpactada()&&(tiro.getPosicionX()>=muro.getPosicionX()&&tiro.getPosicionX()<=muro.getPosicionX()+muro.getAncho())&&(tiro.getPosicionY()<=muro.getPosicionY()&&tiro.getPosicionY()>=muro.getPosicionY()+muro.getAlto())){
-					muro.serDanado(10);
-					tiro.destruir();
-					tiro.setImpactada(true);
-				}
-			}
-
-			if(!tiro.isImpactada()&&(tiro.getPosicionX()>=jugador.getPosicionX()&&tiro.getPosicionX()<=jugador.getPosicionX()+jugador.getAncho())&&(tiro.getPosicionY()<=jugador.getPosicionY()&&tiro.getPosicionY()>=jugador.getPosicionY()+jugador.getAlto())) {
-				tiro.destruir();
-				jugador.restarVida();
-				tiro.setImpactada(true);
-			}
-		}
-	}
+	
 	public ArrayList<Proyectil> getListaProyectiles() {
 		return this.listaProyectiles;
 	}
@@ -228,6 +253,7 @@ public class Juego {
 		this.movimientoInverso = false; //Como los spawneamos por primera vez, van a moverse de izquierda a derecha.
 		
 		//La funcion itera durante 15 veces y cada 5 enemigos, baja un lugar en y para formar filas
+		
 		for(int i = 0; i < 15; i++) {
 			int enemigoSpawnXx = 6;
 			int enemigoSpawnYy = 6;
@@ -239,7 +265,7 @@ public class Juego {
 				auxY = enemigoSpawnYy + 36;
 			} else if(i == 10) {
 				auxX = enemigoSpawnXx;
-				auxY = enemigoSpawnYy + 69;
+				auxY = enemigoSpawnYy + 72;
 			}
 			Enemigo enemigo = new Enemigo(auxX, auxY);
 			enemigos.add(enemigo);
@@ -269,6 +295,17 @@ public class Juego {
 		listaProyectiles.add(jugador.disparar(-1));
 	}
 	//##############################################333
+	private Enemigo elegirEnemigo() {
+		int atr;
+		atr= (int) (Math.random() * 9) + 1;
+	
+			return enemigos.get(atr);
+		
+	}
+	public void dispararEnemigo() {
+		listaProyectiles.add(elegirEnemigo().disparar(1));
+	}
+	
 	
 	public boolean hayEnemigos() {
 		if(enemigos.isEmpty()) {
@@ -314,10 +351,12 @@ public class Juego {
 		for(Proyectil tiro: listaProyectiles) {
 			if(tiro.getPosicionY()>0&&tiro.getPosicionY()<644) {
 				tiro.setPosicionY(tiro.getPosicionY()+(tiro.getVelocidad()*tiro.getDireccion()));
-				System.out.println("Hay un proyectil en la posicion X:"+ tiro.getPosicionX() + "Y:" +tiro.getPosicionY());
+				//System.out.println("Hay un proyectil en la posicion X:"+ tiro.getPosicionX() + "Y:" +tiro.getPosicionY());
 				}
 			}
 		
 		
 	}
+
+	
 }

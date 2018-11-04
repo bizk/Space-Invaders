@@ -28,7 +28,7 @@ public class CampoDeFuerza extends HitBox {
 	
 	public void serDanado(int dano) {
 		this.vida -= dano;
-		if(this.vida <= 0) this.desaparecer();
+		if(this.vida <= 0) this.setImpactada(true);
 	}
 	
 	public void desaparecer() {

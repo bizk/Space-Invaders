@@ -55,7 +55,11 @@ public class HitBox {
 		this.impactada = impactada;
 	}
 
-
+	public boolean estaTocando(int posx, int posy) {
+		if((this.posicionX<=posx&&this.posicionX+this.ancho>=posx) && (this.posicionY<=posy&&this.posicionY+this.alto>=posy)) {
+			return true;
+		} else return false;
+	}
 
 	public int getAncho() {
 		return ancho;
