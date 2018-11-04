@@ -273,7 +273,13 @@ public class Juego {
 	
 	public Enemigo elegirEnemigo() {
 		int atr;
-		atr= (int) (Math.random() * 9) + 1;
+	atr= (int) (Math.random() * 14) ;
+	
+	//if(enemigos.get(atr+5).estaVivo()==true&&enemigos.get(atr+10).estaVivo()==false) 
+	//	atr=atr+5;
+	
+//	if(enemigos.get(atr+10).estaVivo()==true)
+	//	atr=atr+10;
 	
 			return enemigos.get(atr);
 		

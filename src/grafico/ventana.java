@@ -67,7 +67,7 @@ public class ventana extends JFrame {
 		MovimientoEnemigo movEnem = new MovimientoEnemigo();
 		DisparoEnemigo DisparoEnem=new DisparoEnemigo();
 		
-		Timer timer3=new Timer(200,DisparoEnem);
+		Timer timer3=new Timer(2000,DisparoEnem);
 		timer3.start();
 		
 		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
@@ -129,7 +129,7 @@ public class ventana extends JFrame {
 			Iterator<JLabel> itproy= ListProy.iterator();
 			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
 				JLabel aux= (JLabel) itproy.next();
-				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
+				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 16, 16);
 		
 				
 				c.repaint();
@@ -203,7 +203,7 @@ public class ventana extends JFrame {
 	//	for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
 			
 				Juego.getInstancia().dispararEnemigo();
-				JLabel misilEnem=new JLabel(new ImageIcon("misil.png"));
+				JLabel misilEnem=new JLabel(new ImageIcon("misil2.png"));
 				ListProy.add(misilEnem);
 				c.add(misilEnem);
 
