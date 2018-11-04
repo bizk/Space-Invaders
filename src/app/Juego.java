@@ -36,8 +36,8 @@ public class Juego {
 	private boolean movimientoInverso;
 	private ArrayList<Enemigo> enemigos;
 	private ArrayList<CampoDeFuerza> camposDeFuerza;
-	private Collection<HitBox> listaColisiones;
-	private Collection<Proyectil> listaProyectiles;
+//	private Collection<HitBox> listaColisiones;
+	private ArrayList<Proyectil> listaProyectiles;
 	private int TIEMPO_MOVIMIENTO_ENEMIGOS;
 	
 	private static Juego instancia;
@@ -65,12 +65,13 @@ public class Juego {
 		this.jugador = new Jugador(0, 0);
 		enemigos = new ArrayList<Enemigo>();
 		camposDeFuerza = new ArrayList<CampoDeFuerza>();
-		listaColisiones = new ArrayList<HitBox>();
+		//listaColisiones = new ArrayList<HitBox>();
 		listaProyectiles = new ArrayList<Proyectil>();
 		spawnEnemigos();
 		spawnCamposDeFuerza();
 		jugador.spawn(this.anchoPantalla/2 - 100, this.largoPamtalla - 100);
 		this.TIEMPO_MOVIMIENTO_ENEMIGOS = 1000;
+		
 		
 		ventana v = new ventana();
 		
@@ -139,12 +140,42 @@ public class Juego {
 		//******************************************************************
 		
 	}
-	
+	public void chequearImpactos() {
+		for(Proyectil tiro : listaProyectiles) {
+			for(Enemigo enem : enemigos) {
+				if(!tiro.isImpactada()&&(tiro.getPosicionX()>=enem.getPosicionX()&&tiro.getPosicionX()<=enem.getPosicionX()+enem.getAncho())&&(tiro.getPosicionY()<=enem.getPosicionY()&&tiro.getPosicionY()>=enem.getPosicionY()+enem.getAlto())){
+					enem.setImpactada(true);
+					tiro.setImpactada(true);
+					enem.darPuntos(this.jugador);
+					enem.morir();
+					tiro.destruir(); 
+					
+				}
+			}
+		
+			for(CampoDeFuerza muro : camposDeFuerza) {
+				if(!tiro.isImpactada()&&(tiro.getPosicionX()>=muro.getPosicionX()&&tiro.getPosicionX()<=muro.getPosicionX()+muro.getAncho())&&(tiro.getPosicionY()<=muro.getPosicionY()&&tiro.getPosicionY()>=muro.getPosicionY()+muro.getAlto())){
+					muro.serDanado(10);
+					tiro.destruir();
+					tiro.setImpactada(true);
+				}
+			}
+
+			if(!tiro.isImpactada()&&(tiro.getPosicionX()>=jugador.getPosicionX()&&tiro.getPosicionX()<=jugador.getPosicionX()+jugador.getAncho())&&(tiro.getPosicionY()<=jugador.getPosicionY()&&tiro.getPosicionY()>=jugador.getPosicionY()+jugador.getAlto())) {
+				tiro.destruir();
+				jugador.restarVida();
+				tiro.setImpactada(true);
+			}
+		}
+	}
+	public ArrayList<Proyectil> getListaProyectiles() {
+		return this.listaProyectiles;
+	}
 	public void terminarJuego() {
 		//Elimina los enemigos y campos de fuerza
 		enemigos.clear();
 		camposDeFuerza.clear();
-		listaColisiones.clear();
+	//	listaColisiones.clear();
 		listaProyectiles.clear();
 		
 		System.out.println("Termino el Juego");
@@ -223,20 +254,35 @@ public class Juego {
  	* @Parametros:
  	*/
 	private void spawnCamposDeFuerza() {
-		int auxX = 10;
-		int auxY = 20;
+		int auxX = 40;
+		int auxY = this.largoPamtalla - 150;
 		
-		for (int i = 0; i < 4; i++) {
-			CampoDeFuerza campo = new CampoDeFuerza(13, 6, auxX, auxY);
+		for (int i = 0; i < 7; i++) {
+			CampoDeFuerza campo = new CampoDeFuerza(32, 32, auxX, auxY);
 			camposDeFuerza.add(campo);
-			auxX += 15;
+			auxX += 64;
 		}
 	}
 
 	//###############################################
 	public void dispararJugador() {
-		listaProyectiles.add(jugador.disparar());
+		listaProyectiles.add(jugador.disparar(-1));
 	}
+	
+	//aca arranca la frula 
+	
+	public Enemigo elegirEnemigo() {
+		int atr;
+		atr= (int) (Math.random() * 9) + 1;
+	
+			return enemigos.get(atr);
+		
+	}
+	public void dispararEnemigo() {
+		listaProyectiles.add(elegirEnemigo().disparar(1));
+	}
+	
+	
 	//##############################################333
 	
 	public boolean hayEnemigos() {
@@ -261,11 +307,7 @@ public class Juego {
 	public Jugador getJugador() {
 		return this.jugador;
 	}
-	//private Collection<HitBox> listaColisiones;
-	//private Collection<Proyectil> listaProyectiles;
-/*	public listaProyectiles getProyectil() {
-		return this.listaProyectiles;
-		}*/
+
 	public int getAnchoPantalla() {
 		return anchoPantalla;
 	}
@@ -276,5 +318,21 @@ public class Juego {
 	
 	public int getTIEMPO_MOVIMIENTO_ENEMIGOS() {
 		return TIEMPO_MOVIMIENTO_ENEMIGOS;
+	}
+
+	public List<CampoDeFuerza> getCampo() {
+		// TODO Auto-generated method stub
+		return this.camposDeFuerza;
+	}
+
+	public void moverProyectiles() {
+		for(Proyectil tiro: listaProyectiles) {
+			if(tiro.getPosicionY()>0&&tiro.getPosicionY()<644) {
+				tiro.setPosicionY(tiro.getPosicionY()+(tiro.getVelocidad()*tiro.getDireccion()));
+				System.out.println("Hay un proyectil en la posicion X:"+ tiro.getPosicionX() + "Y:" +tiro.getPosicionY());
+				}
+			}
+		
+		
 	}
 }

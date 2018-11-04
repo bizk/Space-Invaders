@@ -1,5 +1,5 @@
 package grafico;
-
+//s
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -16,8 +16,10 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import app.Juego;
-import naves.Enemigo;
+import elementos.CampoDeFuerza;
 import elementos.Proyectil;
+import naves.Enemigo;
+
 
 public class ventana extends JFrame {
 	//private JButton btndos, btnuno, btntres;
@@ -27,10 +29,10 @@ public class ventana extends JFrame {
 	private JLabel naveEnemiga2;
 	private JLabel naveEnemiga3;
 	private JLabel naveJugador;
-	private JLabel camposFuerza;
-	private JLabel disparo;
 	private Container c;
 	private ArrayList<JLabel> enemigosJL;
+	private ArrayList<JLabel> ListMuro;
+	private ArrayList<JLabel> ListProy;
 	
 	public ventana(){
 		c = this.getContentPane();
@@ -41,7 +43,8 @@ public class ventana extends JFrame {
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-	jugar();
+		//Esto no va
+		jugar();
 	}
 	
 	public void jugar() {
@@ -62,12 +65,77 @@ public class ventana extends JFrame {
 			c.add(enem);
 		}
 		MovimientoEnemigo movEnem = new MovimientoEnemigo();
+		DisparoEnemigo DisparoEnem=new DisparoEnemigo();
+		
+		Timer timer3=new Timer(200,DisparoEnem);
+		timer3.start();
+		
 		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
 		timer.start();
 		
-	
 		
+		
+		ListMuro= new ArrayList<JLabel>();
+		
+		
+		
+		for(CampoDeFuerza pared: Juego.getInstancia().getCampo()) {
+			JLabel muro= new JLabel(new ImageIcon ("muroMedio.png"));
+			muro.setBounds(pared.getPosicionX(),pared.getPosicionY(),32,32);
+			ListMuro.add(muro);
+			muro.setVisible(true);
+			c.add(muro);
+		}
+		
+		ListProy= new ArrayList<JLabel>();
+		ManejoDisparo mandis = new ManejoDisparo();
+		Timer timer2 = new Timer(200,mandis);
+		timer2.start();
+	//aca arranca la frula
+		/*
+		while(Juego.getInstancia().hayEnemigos()==true) {
+		int atr;
+		atr= (int) (Math.random() * 9) + 1;
+		if(atr==2) {
+		Juego.getInstancia().dispararJugador();
+			JLabel misil = new JLabel(new ImageIcon("misil.png"));
+			misil.setVisible(true);
+			ListProy.add(misil);
+			c.add(misil);
+		
+			Juego.getInstancia().moverProyectiles();
+			Iterator<JLabel> itproy= ListProy.iterator();
+			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
+				JLabel aux= (JLabel) itproy.next();
+				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
+		
+				
+				c.repaint();
+			
+			
+			
+			
+			
+		}
+		}
+		
+	*/
+	}
+	class ManejoDisparo implements ActionListener{
 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Juego.getInstancia().moverProyectiles();
+			Iterator<JLabel> itproy= ListProy.iterator();
+			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
+				JLabel aux= (JLabel) itproy.next();
+				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
+		
+				
+				c.repaint();
+		}
+			
+		}
 	}
 	
 	class EventoTeclas implements KeyListener{
@@ -86,43 +154,12 @@ public class ventana extends JFrame {
 			} 
 			if(tecla==KeyEvent.VK_SPACE) {
 				Juego.getInstancia().dispararJugador();
-			
-				ImageIcon proyectilx = new ImageIcon("bomb.png");
-				JLabel disparo = new JLabel(proyectilx);
+				JLabel misil = new JLabel(new ImageIcon("misil.png"));
+				misil.setVisible(true);
+				ListProy.add(misil);
+				c.add(misil);
 				
-				int Dx=Juego.getInstancia().getJugador().getPosicionX()+9;
-				int Dy=Juego.getInstancia().getJugador().getPosicionY()-16;
-				c.add(disparo);
-				//Arreglar esto
-			Thread atr=new Thread();
-		 try {
-				 while(Dy>(-600)) {
-					 Thread.sleep(50);
-						 Dy=Dy-60;
-						 disparo.setBounds(Dx,Dy ,16, 16);
-						 c.add(disparo);
-							c.repaint();
-							
-							System.out.println("Disparado"+Dy);//culpa de macri
-		 }
-			 }
-			 catch(Exception t){}
-			Proyectil proyectil=new Proyectil(Dx, Dy);
-			
-				
-			//	disparo.setBounds(Dx,Dy ,16, 16);
-				//c.add(disparo);
-				System.out.println("Disparo");
-				
-	//		if(Juego.getInstancia().estaEnLaPantalla(Dx, Dy)==false) {
-		//		c.remove(disparo);
-			//	c.validate();
-			//	c.repaint();
-			//	}
-				
-				c.repaint();
-			}
-			
+					}
 			if (tecla == KeyEvent.VK_ESCAPE) System.out.println("Juego terminado");
 		}
 
@@ -138,10 +175,7 @@ public class ventana extends JFrame {
 			
 		}
 	}
-	
-	
-	
-	
+
 	class MovimientoEnemigo implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -153,12 +187,33 @@ public class ventana extends JFrame {
 				System.out.println();
 				JLabel enemigoLabel = itr.next();
 				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
+				c.repaint();
 			}
 		}
-		
 	}
 	
- void eventos() {
+	class DisparoEnemigo implements ActionListener {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+	
+	
+	//	Iterator<JLabel> itproy= ListProy.iterator();
+		
+	//	for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
+			
+				Juego.getInstancia().dispararEnemigo();
+				JLabel misilEnem=new JLabel(new ImageIcon("misil.png"));
+				ListProy.add(misilEnem);
+				c.add(misilEnem);
+
+			
+			c.repaint();
+			
+		//}
+	}
+	}
+	private void eventos() {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.addKeyListener(new EventoTeclas());
 		//this.add
@@ -168,39 +223,10 @@ public class ventana extends JFrame {
 		c = this.getContentPane();
 		
 		c.setBackground(Color.BLACK);
-		ImageIcon enemigo1 = new ImageIcon("enemigoA.png");
-		ImageIcon enemigo2 = new ImageIcon("enemigoB.png");
-		ImageIcon enemigo3 = new ImageIcon("enemigoC.png");
-		ImageIcon nave = new ImageIcon("nave.png");
+		
+		c.repaint();
 	
-		
-		/*
-		 for(int i=0;i<50;i++){ //spawn PRUEBA SEGUNDA FILA
-		 naveEnemiga2=new JLabel(enemigo2);
-		naveEnemiga2.setBounds(j, j, 32, 32);//mantener los 32 por el tama�o de imagen
-		c.add(naveEnemiga2);
-		 }
-		 */
-		
-		/*
-		 for(int i=0;i<50;i++){ //spawn PRUEBA TECERA FILA
-		 naveEnemiga3=new JLabel(enemigo3);
-		naveEnemiga3.setBounds(j, j, 32, 32);//mantener los 32 por el tama�o de imagen
-		c.add(naveEnemiga3);
-		 }
-		 */
-		
-		
 
-		 
-		
-		//navePrincipal=new JLabel(nave);  //spawn PRUEBA NAVE PRINCIPAL
-		//navePrincipal.setBounds(240, 322, 32, 32);
-		//c.add(navePrincipal);
-		
-		 // addKeyListener(this); //falta a�adir uno q ande
-		
-		
-	}
 
+}
 }
