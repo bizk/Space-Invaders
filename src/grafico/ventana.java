@@ -89,7 +89,7 @@ public class ventana extends JFrame {
 		timer3.start();
 		
 		DisparoEnemigo DisparoEnem=new DisparoEnemigo();
-		Timer timer4=new Timer(200,DisparoEnem);
+		Timer timer4=new Timer(2000,DisparoEnem);
 		timer4.start();
 		
 	
@@ -122,7 +122,9 @@ public class ventana extends JFrame {
 			// TODO Auto-generated method stub
 			Juego.getInstancia().chequearImpactos();
 			//Acá debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
-			//Juego.getInstancia().eliminarImpactados();
+			Iterator<JLabel> it=ListProy.iterator();
+
+			Juego.getInstancia().eliminarImpactados();
 		}
 		
 	}
@@ -130,20 +132,14 @@ public class ventana extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Juego.getInstancia().moverProyectiles();
-			Iterator<JLabel> itproy= ListProy.iterator();
-			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
-				JLabel aux= (JLabel) itproy.next();
+			Juego.getInstancia().moverProyectiles();								//Muevo todos los proyectiles en pantalla
+			Iterator<JLabel> itproy= ListProy.iterator();							//Debo recorrer en paralelo ambas listas de proyectiles y de JLabels
+			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {		//Por cada nuevo proyectil
+				JLabel aux= (JLabel) itproy.next();									//cambio al JLabel siguiente
 				if(!tiro.isImpactada()) {
 				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
-				aux.setVisible(true);
-				}else {
-					aux.setVisible(false);
-					c.remove(aux);
 				}
-			
 			}
-			
 		}
 	}
 	
@@ -196,8 +192,6 @@ public class ventana extends JFrame {
 				//System.out.print("- x:" + enemigo.getPosicionX());
 				//System.out.println();
 				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
-				} else {	
-				enemigoLabel.setVisible(false);
 				}
 			}
 		}

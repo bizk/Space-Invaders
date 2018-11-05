@@ -60,59 +60,66 @@ public class Juego {
 		System.out.println("[" + jugador.getPosicionX() + ":" + jugador.getPosicionY() + "]");
 	}
 	// ###########################
-	public void chequearImpactos() {
-		for(Proyectil tiro : listaProyectiles) {
-			if(tiro.getPosicionY()<0|| tiro.getPosicionY()>644)
-				tiro.setImpactada(true);
+		public void chequearImpactos() {
+			for(Proyectil tiro : listaProyectiles) {
+				if(tiro.getPosicionY()<0|| tiro.getPosicionY()>644)
+					tiro.setImpactada(true);
+				if(!tiro.isImpactada()) {
+					for(Enemigo enem : enemigos) { //Verifica la lista de enemigos
+						if(!tiro.isImpactada() && enem.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
+							enem.setImpactada(true);
+							tiro.setImpactada(true);
+							enem.darPuntos(this.jugador);
+							System.out.println("Enemigo impactado");
+						}
+					}
+				}
 			if(!tiro.isImpactada()) {
-				for(Enemigo enem : enemigos) { //Verifica la lista de enemigos
-					if(!tiro.isImpactada() && enem.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
-						enem.setImpactada(true);
+				for(CampoDeFuerza muro : camposDeFuerza) {
+					if(!tiro.isImpactada()&&muro.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
+						muro.serDanado(10);
 						tiro.setImpactada(true);
-						enem.darPuntos(this.jugador);
-						System.out.println("Enemigo impactado");
+						System.out.println("Muro Impactado");
 					}
 				}
 			}
-		if(!tiro.isImpactada()) {
-			for(CampoDeFuerza muro : camposDeFuerza) {
-				if(!tiro.isImpactada()&&muro.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
-					muro.serDanado(10);
+				if(!tiro.isImpactada()&&jugador.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())) {
+					jugador.restarVida();
 					tiro.setImpactada(true);
-					System.out.println("Muro Impactado");
+					System.out.println("JugadorImpactado");
 				}
 			}
 		}
-			if(!tiro.isImpactada()&&jugador.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())) {
-				jugador.restarVida();
-				tiro.setImpactada(true);
-				System.out.println("JugadorImpactado");
-			}
-		}
-	}
-	/*public void eliminarImpactados() {
+	public void eliminarImpactados() {
 		// TODO Auto-generated method stub
-		for(Proyectil aux : listaProyectiles) {
+		Iterator<Proyectil> itproy=listaProyectiles.iterator();
+		HitBox aux;
+		while(itproy.hasNext()){
+			aux=(HitBox) itproy.next();
 			if(aux.isImpactada()) {
-				listaProyectiles.remove(aux);
+				itproy.remove();
 				System.out.println("Proyectil Eliminado");
 			}
 		}
-		for(Enemigo aux : enemigos) {
+		Iterator<Enemigo> itenem=enemigos.iterator();
+		while (itenem.hasNext()){
+			aux= (HitBox) itenem.next();
 			if(aux.isImpactada()) {
-				enemigos.remove(aux);
+				itenem.remove();
 				System.out.println("Nave enemiga Eliminado");
 			}
 		}
-		for(CampoDeFuerza aux : camposDeFuerza) {
+		Iterator<CampoDeFuerza> itcamp =camposDeFuerza.iterator();
+		while(itcamp.hasNext()) {
+			aux=(HitBox) itcamp.next();
 			if(aux.isImpactada())
-				camposDeFuerza.remove(aux);
-				System.out.println("Proyectil Eliminado");
+				itcamp.remove();
+				System.out.println("Campo Eliminado");
 		}
-		if(this.jugador.vidasRestantes()==0) {
+		if(this.jugador.vidasRestantes()<=0) {
 			terminarJuego();
 		}
-	}*/
+	}
 	public void nuevoJuego() {
 		this.jugador = new Jugador(0, 0);
 		enemigos = new ArrayList<Enemigo>();
