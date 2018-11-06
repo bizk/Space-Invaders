@@ -14,7 +14,7 @@ public class pruebasMixtas {
 		while(true) {
 			System.out.println("Escribi algo mono:");
 			String input = scanner.nextLine();
-			juego.movimientoJugador(input);
+			
 			if("q".equals(input)) {
 				juego.terminarJuego();
 				break;

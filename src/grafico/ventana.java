@@ -65,9 +65,6 @@ public class ventana extends JFrame {
 			enemigosJL.add(enem);
 			c.add(enem);
 		}
-		MovimientoEnemigo movEnem = new MovimientoEnemigo();
-		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
-		timer.start();
 		
 		ListMuro= new ArrayList<JLabel>();
 		
@@ -80,6 +77,11 @@ public class ventana extends JFrame {
 		}
 		
 		ListProy= new ArrayList<JLabel>();
+		
+		MovimientoEnemigo movEnem = new MovimientoEnemigo();
+		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
+		timer.start();
+		
 		ManejoDisparo mandis = new ManejoDisparo();
 		Timer timer2 = new Timer(200,mandis);
 		timer2.start();
@@ -89,32 +91,25 @@ public class ventana extends JFrame {
 		timer3.start();
 		
 		DisparoEnemigo DisparoEnem=new DisparoEnemigo();
-		Timer timer4=new Timer(200,DisparoEnem);
+		Timer timer4=new Timer(4000,DisparoEnem);
 		timer4.start();
 		
-	
+	c.repaint();
 		
 	}
 	class DisparoEnemigo implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-		
-		
-		//	Iterator<JLabel> itproy= ListProy.iterator();
-			
-		//	for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
 				
 					Juego.getInstancia().dispararEnemigo();
-					JLabel misilEnem=new JLabel(new ImageIcon("misil.png"));
+					JLabel misilEnem=new JLabel(new ImageIcon("misil2.png"));
 					ListProy.add(misilEnem);
 					c.add(misilEnem);
 	 			
 				c.repaint();
-				
-			//}
+			}
 		}
-		}
+	
 	class ManejoColisiones implements ActionListener{
 
 		@Override
@@ -122,7 +117,9 @@ public class ventana extends JFrame {
 			// TODO Auto-generated method stub
 			Juego.getInstancia().chequearImpactos();
 			//Acá debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
-			//Juego.getInstancia().eliminarImpactados();
+			Iterator<JLabel> it=ListProy.iterator();
+
+			Juego.getInstancia().eliminarImpactados();
 		}
 		
 	}
@@ -130,20 +127,14 @@ public class ventana extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Juego.getInstancia().moverProyectiles();
-			Iterator<JLabel> itproy= ListProy.iterator();
-			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {
-				JLabel aux= (JLabel) itproy.next();
+			Juego.getInstancia().moverProyectiles();								//Muevo todos los proyectiles en pantalla
+			Iterator<JLabel> itproy= ListProy.iterator();							//Debo recorrer en paralelo ambas listas de proyectiles y de JLabels
+			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {		//Por cada nuevo proyectil
+				JLabel aux= (JLabel) itproy.next();									//cambio al JLabel siguiente
 				if(!tiro.isImpactada()) {
-				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 5, 20);
-				aux.setVisible(true);
-				}else {
-					aux.setVisible(false);
-					c.remove(aux);
+				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 16, 16);
 				}
-			
 			}
-			
 		}
 	}
 	
@@ -187,8 +178,7 @@ public class ventana extends JFrame {
 	class MovimientoEnemigo implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// No estoy convencido si es la mejor manera, pero funciona.
-			int x, y;
+			Juego.getInstancia().moverEnemigos();
 			Iterator<JLabel> itr = enemigosJL.iterator();
 			for (Enemigo enemigo : Juego.getInstancia().getEnemigos()) {
 				JLabel enemigoLabel = itr.next();
@@ -196,8 +186,6 @@ public class ventana extends JFrame {
 				//System.out.print("- x:" + enemigo.getPosicionX());
 				//System.out.println();
 				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
-				} else {	
-				enemigoLabel.setVisible(false);
 				}
 			}
 		}
@@ -215,38 +203,6 @@ public class ventana extends JFrame {
 		c = this.getContentPane();
 		
 		c.setBackground(Color.BLACK);
-	
-		
-		/*
-		 for(int i=0;i<50;i++){ //spawn PRUEBA SEGUNDA FILA
-		 naveEnemiga2=new JLabel(enemigo2);
-		naveEnemiga2.setBounds(j, j, 32, 32);//mantener los 32 por el tamaï¿½o de imagen
-		c.add(naveEnemiga2);
-		 }
-		 */
-		
-		/*
-		 for(int i=0;i<50;i++){ //spawn PRUEBA TECERA FILA
-		 naveEnemiga3=new JLabel(enemigo3);
-		naveEnemiga3.setBounds(j, j, 32, 32);//mantener los 32 por el tamaï¿½o de imagen
-		c.add(naveEnemiga3);
-		 }
-		 */
-		
-		
-		/*
-		 for(int i=0;i<5;i++){ //spawn PRUEBA CAMPOS DE FUERZA
-		 campoDeFuerza=new JLabel(***BUSCAR PNG DE 32X32***);
-		campoDeFuerza.setBounds(j, j, 32, 32);//mantener los 32 por el tamaï¿½o de imagen
-		c.add(campoDeFuerza);
-		 }
-		 */
-		
-		//navePrincipal=new JLabel(nave);  //spawn PRUEBA NAVE PRINCIPAL
-		//navePrincipal.setBounds(240, 322, 32, 32);
-		//c.add(navePrincipal);
-		
-		 // addKeyListener(this); //falta aï¿½adir uno q ande
 		
 		
 	}

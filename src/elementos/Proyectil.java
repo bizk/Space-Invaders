@@ -19,7 +19,7 @@ public class Proyectil extends HitBox {
 	
 	
 	public Proyectil(int x,int y, int direccion) {
-		super(5, 20, x+15, y); //crea la hitbox del proyectil
+		super(5, 20, x+9, y); //crea la hitbox del proyectil
 		this.velocidadProyectil = 20;
 		this.direccionProyectilY = direccion;
 	}
