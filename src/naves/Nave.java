@@ -29,7 +29,7 @@ public abstract class Nave extends HitBox {
 	}
 	
 	public Proyectil disparar(int direccion) {
-		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY(),direccion);
+		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY()+20,direccion); 		//agrego 32px a la nave enemiga para que lo genere abajo de su hitbox
 		return proyectil;
 	}
 	
