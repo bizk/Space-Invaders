@@ -13,6 +13,7 @@ import elementos.Proyectil;
 import grafico.ventana;
 import naves.Enemigo;
 import naves.Jugador;
+import valueobject.HitBoxVO;
 
 //
 //
@@ -278,8 +279,12 @@ public class Juego {
 		if(instancia == null) instancia = new Juego();
 		return instancia;
 	}
-	public List<Enemigo> getEnemigos() {
-		return this.enemigos;
+	public List<HitBoxVO> getEnemigos() {
+		List<HitBoxVO> aux = new ArrayList<HitBoxVO>();
+		for(Enemigo nave : enemigos) {
+			aux.add(nave.getHBVO());
+		}
+		return aux;
 	}
 	public Jugador getJugador() {
 		return this.jugador;

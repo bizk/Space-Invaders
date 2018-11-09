@@ -20,6 +20,7 @@ import elementos.CampoDeFuerza;
 import elementos.Proyectil;
 import naves.Enemigo;
 import naves.Nave;
+import valueobject.HitBoxVO;
 
 
 public class ventana extends JFrame {
@@ -59,7 +60,7 @@ public class ventana extends JFrame {
 		
 		enemigosJL = new ArrayList<JLabel>();
 		ImageIcon enemigo1 = new ImageIcon("enemigoA.png");
-		for (Enemigo enemigo : Juego.getInstancia().getEnemigos()) {
+		for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
 			JLabel enem = new JLabel(enemigo1);
 			enem.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
 			enemigosJL.add(enem);
@@ -180,13 +181,14 @@ public class ventana extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			Juego.getInstancia().moverEnemigos();
 			Iterator<JLabel> itr = enemigosJL.iterator();
-			for (Enemigo enemigo : Juego.getInstancia().getEnemigos()) {
+			for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
 				JLabel enemigoLabel = itr.next();
-				if(!enemigo.isImpactada()) {
 				//System.out.print("- x:" + enemigo.getPosicionX());
 				//System.out.println();
 				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
-				}
+			}
+			while(itr.hasNext()) {
+				itr.next().setVisible(false);
 			}
 		}
 	}
