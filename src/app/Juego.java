@@ -14,6 +14,7 @@ import grafico.ventana;
 import naves.Enemigo;
 import naves.Jugador;
 import valueobject.HitBoxVO;
+import valueobject.ProyectilVO;;
 
 //
 //
@@ -82,7 +83,7 @@ public class Juego {
 						muro.serDanado(10);
 						tiro.setImpactada(true);
 						System.out.println("Muro Impactado");
-					}
+    	}
 				}
 			}
 				if(!tiro.isImpactada()&&jugador.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())) {
@@ -139,11 +140,11 @@ public class Juego {
 		ventana v = new ventana();
 		
 	}
-	
-	public ArrayList<Proyectil> getListaProyectiles() {
-		return this.listaProyectiles;
-	}
-	public void terminarJuego() {
+	//public ArrayList<Proyectil> getListaProyectiles() {
+//		return this.listaProyectiles;
+//	}
+
+  public void terminarJuego() {
 		//Elimina los enemigos y campos de fuerza
 		enemigos.clear();
 		camposDeFuerza.clear();
@@ -283,6 +284,13 @@ public class Juego {
 		List<HitBoxVO> aux = new ArrayList<HitBoxVO>();
 		for(Enemigo nave : enemigos) {
 			aux.add(nave.getHBVO());
+		}
+		return aux;
+	}
+public List<ProyectilVO>getListaProyectiles(){
+		List<ProyectilVO>aux=new ArrayList<ProyectilVO>();
+		for(Proyectil proyect: listaProyectiles) {
+			aux.add(proyect.getPVO());
 		}
 		return aux;
 	}

@@ -39,4 +39,7 @@ public class CampoDeFuerza extends HitBox {
 	public boolean getExiste() {
 		return this.existe;
 	}
+	public int getVida() {
+		return this.vida;
+	}
 }

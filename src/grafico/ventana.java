@@ -21,6 +21,7 @@ import elementos.Proyectil;
 import naves.Enemigo;
 import naves.Nave;
 import valueobject.HitBoxVO;
+import valueobject.ProyectilVO;
 
 
 public class ventana extends JFrame {
@@ -103,7 +104,7 @@ public class ventana extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 				
 					Juego.getInstancia().dispararEnemigo();
-					JLabel misilEnem=new JLabel(new ImageIcon("misil2.png"));
+					JLabel misilEnem=new JLabel();
 					ListProy.add(misilEnem);
 					c.add(misilEnem);
 	 			
@@ -117,7 +118,7 @@ public class ventana extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			Juego.getInstancia().chequearImpactos();
-			//Ac· debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
+			//Ac√° debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
 			Iterator<JLabel> it=ListProy.iterator();
 
 			Juego.getInstancia().eliminarImpactados();
@@ -130,15 +131,23 @@ public class ventana extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			Juego.getInstancia().moverProyectiles();								//Muevo todos los proyectiles en pantalla
 			Iterator<JLabel> itproy= ListProy.iterator();							//Debo recorrer en paralelo ambas listas de proyectiles y de JLabels
-			for(Proyectil tiro : Juego.getInstancia().getListaProyectiles()) {		//Por cada nuevo proyectil
+			for(ProyectilVO tiro : Juego.getInstancia().getListaProyectiles()) {		//Por cada nuevo proyectil
 				JLabel aux= (JLabel) itproy.next();									//cambio al JLabel siguiente
-				if(!tiro.isImpactada()) {
 				aux.setBounds(tiro.getPosicionX(), tiro.getPosicionY(), 16, 16);
+				aux.setVisible(true);
+				if(tiro.getDireccion()>0){
+					aux.setIcon(new ImageIcon("misil2.png"));//
+				}
+				else{
+					aux.setIcon(new ImageIcon("misil.png"));
 				}
 			}
+			while(itproy.hasNext()){
+				itproy.next().setVisible(false);
 		}
 	}
-	
+}	
+ 
 	class EventoTeclas implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -157,8 +166,7 @@ public class ventana extends JFrame {
 				Juego.getInstancia().dispararJugador();
 				JLabel misil = new JLabel(new ImageIcon("misil.png"));
 				ListProy.add(misil);
-				c.add(misil);
-				
+				c.add(misil);				
 			}
 			if (tecla == KeyEvent.VK_ESCAPE) System.out.println("Juego terminado");
 		}
