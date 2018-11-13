@@ -1,4 +1,5 @@
 package naves;
+import app.Juego;
 import elementos.HitBox;
 import elementos.Proyectil;
 
@@ -27,22 +28,23 @@ public abstract class Nave extends HitBox {
 		this.vivo = true;
 	}
 	
-	public Proyectil disparar() {
-		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY());
+	public Proyectil disparar(int direccion) {
+		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY()+20,direccion); 		//agrego 32px a la nave enemiga para que lo genere abajo de su hitbox
 		return proyectil;
-				//Falta el lugar de inciio del proyectil
 	}
 	
-	/*
-	public Void moverse() {
-	
+	public void moverseEjeX(int x) {
+		//ESTO NO ESTA BIEN
+		super.setPosicionX(super.getPosicionX() + x);
 	}
-	*/
+	
 	public void morir() {
 		this.vivo = false;
 	}
 	
-	public void spawn() {
+	public void spawn(int posicionX, int posicionY) {
+		super.setPosicionX(posicionX);
+		super.setPosicionY(posicionY);
 		this.vivo = true;
 	}
 	

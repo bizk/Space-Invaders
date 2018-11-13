@@ -28,10 +28,18 @@ public class CampoDeFuerza extends HitBox {
 	
 	public void serDanado(int dano) {
 		this.vida -= dano;
-		if(vida <= 0) this.existe = false;
+		if(this.vida <= 0) this.setImpactada(true);
+	}
+	
+	public void desaparecer() {
+		this.vida = 0;
+		this.existe = false;
 	}
 	
 	public boolean getExiste() {
-		return existe;
+		return this.existe;
+	}
+	public int getVida() {
+		return this.vida;
 	}
 }
