@@ -73,8 +73,7 @@ public class HitBox {
 	}
 	
 	public HitBoxVO getHBVO() {
-	
-		return(new HitBoxVO(this.ancho,this.alto,this.posicionX,this.posicionY));
+		return (new HitBoxVO(this.ancho,this.alto,this.posicionX,this.posicionY));
 	}
 	
 	
