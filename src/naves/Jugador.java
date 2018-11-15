@@ -58,4 +58,6 @@ public class Jugador extends Nave {
 	public void setPuntaje(int puntaje) {
 		this.puntaje = puntaje;
 	}
+
+
 }

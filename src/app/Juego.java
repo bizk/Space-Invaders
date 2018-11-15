@@ -29,7 +29,6 @@ import valueobject.ProyectilVO;;
 
 public class Juego {
 	private int nivel;
-	private String Difficultad;
 	private Jugador jugador;
 	private int anchoPantalla;
 	private int largoPamtalla;
@@ -38,9 +37,8 @@ public class Juego {
 	private boolean movimientoInverso;
 	private ArrayList<Enemigo> enemigos;
 	private ArrayList<CampoDeFuerza> camposDeFuerza;
-//	private Collection<HitBox> listaColisiones;
 	private ArrayList<Proyectil> listaProyectiles;
-	private int TIEMPO_MOVIMIENTO_ENEMIGOS;
+	private int distancia_mov_enem;
 	
 	private static Juego instancia;
 	
@@ -65,11 +63,11 @@ public class Juego {
 
 	public void chequearImpactos() {
 			for(Proyectil tiro : listaProyectiles) {
-				if(tiro.getPosicionY()<0|| tiro.getPosicionY()>644)
+				if(tiro.getPosicionY()<=0|| tiro.getPosicionY()>=644)
 					tiro.setImpactada(true);
 				if(!tiro.isImpactada()) {
 					for(Enemigo enem : enemigos) { //Verifica la lista de enemigos
-						if(!tiro.isImpactada() && enem.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
+						if(!tiro.isImpactada() && enem.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())&& tiro.getDireccion()<0){
 							enem.setImpactada(true);
 							tiro.setImpactada(true);
 							enem.darPuntos(this.jugador);
@@ -134,17 +132,14 @@ public class Juego {
 		spawnEnemigos();
 		spawnCamposDeFuerza();
 		jugador.spawn(this.anchoPantalla/2 - 100, this.largoPamtalla - 100);
-		this.TIEMPO_MOVIMIENTO_ENEMIGOS = 1000;
-		
+		this.distancia_mov_enem = 2;
+		nivel=1;
 		
 		ventana v = new ventana();
 		
 	}
-	//public ArrayList<Proyectil> getListaProyectiles() {
-//		return this.listaProyectiles;
-//	}
 
-  public void terminarJuego() {
+	public void terminarJuego() {
 		//Elimina los enemigos y campos de fuerza
 		enemigos.clear();
 		camposDeFuerza.clear();
@@ -163,9 +158,11 @@ public class Juego {
  	*/
 	public void siguienteNivel() {
 		this.nivel++;
+		this.distancia_mov_enem+=2;
 		spawnEnemigos();
 		spawnCamposDeFuerza();
 		jugador.recibirPuntos(500);
+		listaProyectiles.clear();
 	}
 	
 	public void moverJugadorIzq() {
@@ -263,7 +260,6 @@ public class Juego {
 		
 	}
 	
-	
 	public boolean hayEnemigos() {
 		if(enemigos.isEmpty()) {
 			return false;
@@ -280,6 +276,7 @@ public class Juego {
 		if(instancia == null) instancia = new Juego();
 		return instancia;
 	}
+	
 	public List<HitBoxVO> getEnemigos() {
 		List<HitBoxVO> aux = new ArrayList<HitBoxVO>();
 		for(Enemigo nave : enemigos) {
@@ -287,13 +284,15 @@ public class Juego {
 		}
 		return aux;
 	}
-public List<ProyectilVO>getListaProyectiles(){
+
+	public List<ProyectilVO>getListaProyectiles(){
 		List<ProyectilVO>aux=new ArrayList<ProyectilVO>();
 		for(Proyectil proyect: listaProyectiles) {
 			aux.add(proyect.getPVO());
 		}
 		return aux;
 	}
+	
 	public Jugador getJugador() {
 		return this.jugador;
 	}
@@ -306,8 +305,8 @@ public List<ProyectilVO>getListaProyectiles(){
 		return largoPamtalla;
 	}
 	
-	public int getTIEMPO_MOVIMIENTO_ENEMIGOS() {
-		return TIEMPO_MOVIMIENTO_ENEMIGOS;
+	public int getDistancia_mov_enem() {
+		return distancia_mov_enem;
 	}
 
 	public List<CampoDeFuerza> getCampo() {
@@ -333,9 +332,9 @@ public List<ProyectilVO>getListaProyectiles(){
 				if(chocaPared) {
 					enemigo.setPosicionY(enemigo.getPosicionY() + 36);}
 				else if(movimientoInverso) {
-					enemigo.setPosicionX(enemigo.getPosicionX() - 36);			
+					enemigo.setPosicionX(enemigo.getPosicionX() - distancia_mov_enem);			
 				} else {
-					enemigo.setPosicionX(enemigo.getPosicionX() + 36);
+					enemigo.setPosicionX(enemigo.getPosicionX() + distancia_mov_enem);
 				}
 				if(enemigo.getPosicionY() >= jugador.getPosicionY()) {			//Si algun enemigo llega a la altura del jugador o menos se termina el juego
 					terminarJuego();
@@ -343,8 +342,6 @@ public List<ProyectilVO>getListaProyectiles(){
 				}
 			}
 	}
-
-	
 	
 	public void moverProyectiles() {
 		for(Proyectil tiro: listaProyectiles) {
@@ -355,6 +352,12 @@ public List<ProyectilVO>getListaProyectiles(){
 			}
 		
 		
+	}
+
+	
+	public int getNivel() {
+		// TODO Auto-generated method stub
+		return nivel;
 	}
 
 	
