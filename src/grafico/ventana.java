@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.ImageIcon;
@@ -17,12 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
-import Exceptions.NoHayEnemigosException;
 import app.Juego;
 import elementos.CampoDeFuerza;
-import elementos.Proyectil;
-import naves.Enemigo;
-import naves.Nave;
 import valueobject.HitBoxVO;
 import valueobject.ProyectilVO;
 
@@ -112,7 +107,7 @@ public class ventana extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Manejo de colisiones
-			Juego.getInstancia().chequearImpactos();					//AcÃ¡ debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
+			Juego.getInstancia().chequearImpactos();					//AcÃƒÂ¡ debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
 			Juego.getInstancia().eliminarImpactados();
 			//Manejo de proyectiles, mover y dibujar
 			Juego.getInstancia().moverProyectiles();								//Muevo todos los proyectiles en pantalla
@@ -156,11 +151,11 @@ public class ventana extends JFrame {
 			}else
 				JOptionPane.showMessageDialog(null, "Tu puntaje final es de "+ Juego.getInstancia().getJugador().getPuntaje() + "puntos","Ganaste!", JOptionPane.INFORMATION_MESSAGE);
 		
-			//Actualizaci�n del mensaje de puntaje y de vidas del jugador
+			//Actualización del mensaje de puntaje y de vidas del jugador
 			puntaje.setText("Puntos: "+ Juego.getInstancia().getJugador().getPuntaje());
 			vidas.setText("Vidas: "+ Juego.getInstancia().getJugador().vidasRestantes());
 			
-			//Manejo del disparo de los enemigos. S�lo disparan si logran aumentar al randomizador a m�s de 500.
+			//Manejo del disparo de los enemigos. Sólo disparan si logran aumentar al randomizador a más de 500.
 			if(randomizador > 100) {
 				Juego.getInstancia().dispararEnemigo();
 				JLabel tiro = new JLabel();
