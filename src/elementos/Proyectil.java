@@ -22,8 +22,8 @@ public class Proyectil extends HitBox {
 	
 	
 	public Proyectil(int x,int y, int direccion) {
-		super(5, 20, x+9, y); //crea la hitbox del proyectil
-		this.velocidadProyectil = 20;
+		super(5, 16, x+8, (direccion>0? y+10 : y-35 )); //crea la hitbox del proyectil, Un poco más arriba si es del jugador, un poco más abajo si es de las naves enemigas
+		this.velocidadProyectil = 3;
 		this.direccionProyectilY = direccion;
 	}
 	

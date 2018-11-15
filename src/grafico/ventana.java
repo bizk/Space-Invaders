@@ -2,6 +2,7 @@ package grafico;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,8 +14,10 @@ import java.util.Iterator;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
+import Exceptions.NoHayEnemigosException;
 import app.Juego;
 import elementos.CampoDeFuerza;
 import elementos.Proyectil;
@@ -36,11 +39,14 @@ public class ventana extends JFrame {
 	private ArrayList<JLabel> enemigosJL;
 	private ArrayList<JLabel> ListMuro;
 	private ArrayList<JLabel> ListProy;
+	private JLabel puntaje;
+	private JLabel vidas;
+	private int randomizador=0;
 	
 	public ventana(){
 		c = this.getContentPane();
-		configurar();
 		eventos();
+		c.setBackground(Color.BLACK);
 		this.setSize(Juego.getInstancia().getAnchoPantalla(), Juego.getInstancia().getLargoPamtalla());
 		this.setResizable(false);
 		this.setVisible(true);
@@ -80,55 +86,35 @@ public class ventana extends JFrame {
 		
 		ListProy= new ArrayList<JLabel>();
 		
-		MovimientoEnemigo movEnem = new MovimientoEnemigo();
-		Timer timer = new Timer(Juego.getInstancia().getTIEMPO_MOVIMIENTO_ENEMIGOS(), movEnem);
+		puntaje= new JLabel();
+		puntaje.setText("Puntos: "+ Juego.getInstancia().getJugador().getPuntaje());
+		puntaje.setFont(new Font("OCR A Extended", Font.BOLD,14));
+		puntaje.setBounds(350, 570, 150, 30);
+		puntaje.setForeground(Color.WHITE);
+		puntaje.setVisible(true);
+		c.add(puntaje);
+		
+		vidas=new JLabel();
+		vidas.setText("Vidas: "+ Juego.getInstancia().getJugador().vidasRestantes());
+		vidas.setFont(new Font("OCR A Extended", Font.BOLD,14));
+		vidas.setBounds(30, 570, 100, 30);
+		vidas.setForeground(Color.WHITE);
+		vidas.setVisible(true);
+		c.add(vidas);
+		
+		Manejo refresco = new Manejo();
+		Timer timer = new Timer(20, refresco);
 		timer.start();
-		
-		ManejoDisparo mandis = new ManejoDisparo();
-		Timer timer2 = new Timer(200,mandis);
-		timer2.start();
-	
-		ManejoColisiones mancol = new ManejoColisiones();
-		Timer timer3 = new Timer(200, mancol);
-		timer3.start();
-		
-		DisparoEnemigo DisparoEnem=new DisparoEnemigo();
-		Timer timer4=new Timer(4000,DisparoEnem);
-		timer4.start();
-		
-	c.repaint();
-		
+
 	}
-	class DisparoEnemigo implements ActionListener {
+
+	class Manejo implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-				
-					Juego.getInstancia().dispararEnemigo();
-					JLabel misilEnem=new JLabel();
-					ListProy.add(misilEnem);
-					c.add(misilEnem);
-	 			
-				c.repaint();
-			}
-		}
-	
-	class ManejoColisiones implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			Juego.getInstancia().chequearImpactos();
-			//Ac√° debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
-			Iterator<JLabel> it=ListProy.iterator();
-
+			//Manejo de colisiones
+			Juego.getInstancia().chequearImpactos();					//Ac√É¬° debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
 			Juego.getInstancia().eliminarImpactados();
-		}
-		
-	}
-	class ManejoDisparo implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
+			//Manejo de proyectiles, mover y dibujar
 			Juego.getInstancia().moverProyectiles();								//Muevo todos los proyectiles en pantalla
 			Iterator<JLabel> itproy= ListProy.iterator();							//Debo recorrer en paralelo ambas listas de proyectiles y de JLabels
 			for(ProyectilVO tiro : Juego.getInstancia().getListaProyectiles()) {		//Por cada nuevo proyectil
@@ -144,10 +130,58 @@ public class ventana extends JFrame {
 			}
 			while(itproy.hasNext()){
 				itproy.next().setVisible(false);
+			}
+			//Manejo de enemigos, movimiento y dibujar. Control del nuevo nivel.
+			Juego.getInstancia().moverEnemigos();
+			if(Juego.getInstancia().hayEnemigos()) {
+				Iterator<JLabel> itr = enemigosJL.iterator();
+				for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
+					JLabel enemigoLabel = itr.next();
+					//System.out.print("- x:" + enemigo.getPosicionX());
+					//System.out.println();
+					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
+				}
+				while(itr.hasNext()) {
+					itr.next().setVisible(false);
+				}
+			}else if(Juego.getInstancia().getNivel()<3){
+				Juego.getInstancia().siguienteNivel();
+				JOptionPane.showMessageDialog(null, "Has ganado 500 puntos. Continuas?", "Has pasado de nivel!", JOptionPane.WARNING_MESSAGE);
+				Iterator<JLabel> itr = enemigosJL.iterator();
+				for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
+					JLabel enemigoLabel = itr.next();
+					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
+					enemigoLabel.setVisible(true);
+				}
+			}else
+				JOptionPane.showMessageDialog(null, "Tu puntaje final es de "+ Juego.getInstancia().getJugador().getPuntaje() + "puntos","Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+		
+			//ActualizaciÛn del mensaje de puntaje y de vidas del jugador
+			puntaje.setText("Puntos: "+ Juego.getInstancia().getJugador().getPuntaje());
+			vidas.setText("Vidas: "+ Juego.getInstancia().getJugador().vidasRestantes());
+			
+			//Manejo del disparo de los enemigos. SÛlo disparan si logran aumentar al randomizador a m·s de 500.
+			if(randomizador > 100) {
+				Juego.getInstancia().dispararEnemigo();
+				JLabel tiro = new JLabel();
+				ListProy.add(tiro);
+				c.add(tiro);
+				randomizador=0;
+			} else {
+				randomizador= randomizador + (int) (Math.random()*Juego.getInstancia().getDistancia_mov_enem())+1;
+			}
+		
 		}
+
 	}
-}	
- 
+
+	private void eventos() {
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.addKeyListener(new EventoTeclas());
+		//this.add
+	}
+	
+
 	class EventoTeclas implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -182,40 +216,6 @@ public class ventana extends JFrame {
 			// TODO Auto-generated method stub
 			
 		}
-	}
 
-	class MovimientoEnemigo implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Juego.getInstancia().moverEnemigos();
-			Iterator<JLabel> itr = enemigosJL.iterator();
-			for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
-				JLabel enemigoLabel = itr.next();
-				//System.out.print("- x:" + enemigo.getPosicionX());
-				//System.out.println();
-				enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
-			}
-			while(itr.hasNext()) {
-				itr.next().setVisible(false);
-			}
-		}
 	}
-	
-	
-	
-	private void eventos() {
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.addKeyListener(new EventoTeclas());
-		//this.add
-	}
-	
-	private void configurar(){
-		c = this.getContentPane();
-		
-		c.setBackground(Color.BLACK);
-		
-		
-	}
-
-
 }
