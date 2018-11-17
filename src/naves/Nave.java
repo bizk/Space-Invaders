@@ -15,21 +15,16 @@ import elementos.Proyectil;
 //
 //
 
-
-
-
 public abstract class Nave extends HitBox {
-	protected int identificador;
 	protected boolean vivo;
 	
 	public Nave(int an, int al, int x, int y) {
 		super(an, al, x, y);
-		this.identificador = 213421;
 		this.vivo = true;
 	}
 	
-	public Proyectil disparar() {
-		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY());
+	public Proyectil disparar(int direccion) {
+		Proyectil proyectil = new Proyectil(super.getPosicionX(), super.getPosicionY()+20,direccion); 		//agrego 32px a la nave enemiga para que lo genere abajo de su hitbox
 		return proyectil;
 	}
 	

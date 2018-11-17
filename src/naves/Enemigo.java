@@ -15,7 +15,7 @@ public class Enemigo extends Nave {
 	private int velocidadNave;
 
 	public Enemigo(int x, int y) {
-		super(4, 4, x, y);
+		super(32, 32, x, y);
 		this.velocidadNave = 10;		
 		this.vivo = true;
 	}
