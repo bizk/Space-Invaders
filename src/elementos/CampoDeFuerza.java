@@ -11,12 +11,14 @@ package elementos;
 //
 
 
+import valueobject.CampoDeFuerzaVO;
+
 public class CampoDeFuerza extends HitBox {
 	private int vida;
 	private boolean existe;
 	
 	public CampoDeFuerza(int an, int al, int x, int y){
-		super(an, al, x, y);
+			super(an, al, x, y);
 		this.vida = 100;
 		this.existe = true;
 	}
@@ -34,6 +36,10 @@ public class CampoDeFuerza extends HitBox {
 	public void desaparecer() {
 		this.vida = 0;
 		this.existe = false;
+	}
+
+	public CampoDeFuerzaVO getVO() {
+		return new CampoDeFuerzaVO(vida, existe, this.getAncho(), this.getAlto(), this.getPosicionX(), this.getPosicionY());
 	}
 	
 	public boolean getExiste() {

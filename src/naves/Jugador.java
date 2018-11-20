@@ -17,7 +17,7 @@ public class Jugador extends Nave {
 	private int vida;
 	
 	public Jugador(int x, int y) {
-		super(4, 4, x, y);
+		super(32, 32, x, y);
 		this.vivo = true;
 		this.vida = 3;
 		this.puntaje = 0;

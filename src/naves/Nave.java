@@ -15,16 +15,11 @@ import elementos.Proyectil;
 //
 //
 
-
-
-
 public abstract class Nave extends HitBox {
-	protected int identificador;
 	protected boolean vivo;
 	
 	public Nave(int an, int al, int x, int y) {
 		super(an, al, x, y);
-		this.identificador = 213421;
 		this.vivo = true;
 	}
 	

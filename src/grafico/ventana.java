@@ -1,12 +1,9 @@
 package grafico;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
+import java.awt.*;
+import java.awt.event.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -15,12 +12,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-
+import javax.swing.*;
 import app.Juego;
 import elementos.CampoDeFuerza;
+import valueobject.CampoDeFuerzaVO;
 import valueobject.HitBoxVO;
 import valueobject.ProyectilVO;
 
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.plaf.ColorUIResource;
 
 public class ventana extends JFrame {
 	//private JButton btndos, btnuno, btntres;
@@ -37,6 +39,10 @@ public class ventana extends JFrame {
 	private JLabel puntaje;
 	private JLabel vidas;
 	private int randomizador=0;
+
+	private JPanel menuPanel;
+	private Timer timer;
+
 	
 	public ventana(){
 		c = this.getContentPane();
@@ -46,7 +52,10 @@ public class ventana extends JFrame {
 		this.setResizable(false);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
+		menuPanel = generarMenu();
+		c.add(menuPanel);
+
 		//Esto no va
 		jugar();
 	}
@@ -70,10 +79,10 @@ public class ventana extends JFrame {
 		}
 		
 		ListMuro= new ArrayList<JLabel>();
-		
-		for(CampoDeFuerza pared: Juego.getInstancia().getCampo()) {
-			JLabel muro= new JLabel(new ImageIcon ("muroMedio.png"));
-			muro.setBounds(pared.getPosicionX(),pared.getPosicionY(),32,32);
+
+		for(CampoDeFuerzaVO pared: Juego.getInstancia().getCampo()) {
+			JLabel muro = new JLabel(new ImageIcon ("muroMedio.png"));
+			muro.setBounds(pared.getPosicionX(), pared.getPosicionY(), pared.getAncho(), pared.getAlto());
 			ListMuro.add(muro);
 			muro.setVisible(true);
 			c.add(muro);
@@ -98,7 +107,7 @@ public class ventana extends JFrame {
 		c.add(vidas);
 		
 		Manejo refresco = new Manejo();
-		Timer timer = new Timer(20, refresco);
+		timer = new Timer(20, refresco);
 		timer.start();
 
 	}
@@ -108,8 +117,7 @@ public class ventana extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			//Manejo de colisiones
 			Juego.getInstancia().chequearImpactos();					//AcÃƒÂ¡ debe recorrer todas las listas de JLabels de la ventana para eliminar las correspondientes.
-			Juego.getInstancia().eliminarImpactados();
-			//Manejo de proyectiles, mover y dibujar
+			Juego.getInstancia().eliminarImpactados();								//Manejo de proyectiles, mover y dibujar
 			Juego.getInstancia().moverProyectiles();								//Muevo todos los proyectiles en pantalla
 			Iterator<JLabel> itproy= ListProy.iterator();							//Debo recorrer en paralelo ambas listas de proyectiles y de JLabels
 			for(ProyectilVO tiro : Juego.getInstancia().getListaProyectiles()) {		//Por cada nuevo proyectil
@@ -126,21 +134,42 @@ public class ventana extends JFrame {
 			while(itproy.hasNext()){
 				itproy.next().setVisible(false);
 			}
+
+			//Manejo de muros
+			if(Juego.getInstancia().hayCamposDeFuerza()){
+				Iterator<JLabel> itrMuro = ListMuro.iterator();
+				for (CampoDeFuerzaVO campo : Juego.getInstancia().getCampo()){
+					JLabel campoLabel = itrMuro.next();
+					campoLabel.setBounds(campo.getPosicionX() + 10, campo.getPosicionY(), campo.getAncho(), campo.getAlto());
+				 }
+				while(itrMuro.hasNext()){
+					itrMuro.next().setVisible(false);
+				}
+			}
+
 			//Manejo de enemigos, movimiento y dibujar. Control del nuevo nivel.
 			Juego.getInstancia().moverEnemigos();
 			if(Juego.getInstancia().hayEnemigos()) {
 				Iterator<JLabel> itr = enemigosJL.iterator();
 				for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
 					JLabel enemigoLabel = itr.next();
-					//System.out.print("- x:" + enemigo.getPosicionX());
-					//System.out.println();
 					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
 				}
 				while(itr.hasNext()) {
 					itr.next().setVisible(false);
 				}
-			}else if(Juego.getInstancia().getNivel()<3){
+			} else if(Juego.getInstancia().getNivel()<3){
 				Juego.getInstancia().siguienteNivel();
+
+				ListMuro.removeAll(ListMuro);
+				for(CampoDeFuerzaVO pared: Juego.getInstancia().getCampo()) {
+					JLabel muro = new JLabel(new ImageIcon ("muroMedio.png"));
+					muro.setBounds(pared.getPosicionX(), pared.getPosicionY(), pared.getAncho(), pared.getAlto());
+					ListMuro.add(muro);
+					muro.setVisible(true);
+					c.add(muro);
+				}
+
 				JOptionPane.showMessageDialog(null, "Has ganado 500 puntos. Continuas?", "Has pasado de nivel!", JOptionPane.WARNING_MESSAGE);
 				Iterator<JLabel> itr = enemigosJL.iterator();
 				for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
@@ -148,9 +177,12 @@ public class ventana extends JFrame {
 					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
 					enemigoLabel.setVisible(true);
 				}
-			}else
-				JOptionPane.showMessageDialog(null, "Tu puntaje final es de "+ Juego.getInstancia().getJugador().getPuntaje() + "puntos","Ganaste!", JOptionPane.INFORMATION_MESSAGE);
-		
+			}
+			else {
+				JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+				System.exit(0);
+			}
+
 			//Actualización del mensaje de puntaje y de vidas del jugador
 			puntaje.setText("Puntos: "+ Juego.getInstancia().getJugador().getPuntaje());
 			vidas.setText("Vidas: "+ Juego.getInstancia().getJugador().vidasRestantes());
@@ -162,7 +194,8 @@ public class ventana extends JFrame {
 				ListProy.add(tiro);
 				c.add(tiro);
 				randomizador=0;
-			} else {
+			}
+			else {
 				randomizador= randomizador + (int) (Math.random()*Juego.getInstancia().getDistancia_mov_enem())+1;
 			}
 		
@@ -175,29 +208,41 @@ public class ventana extends JFrame {
 		this.addKeyListener(new EventoTeclas());
 		//this.add
 	}
-	
+
 
 	class EventoTeclas implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-			int tecla = e.getKeyCode();	
-			if(tecla == KeyEvent.VK_LEFT) {
-				Juego.getInstancia().getJugador().moverseEjeX(-5);
-				naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
-				//System.out.println(Juego.getInstancia().getJugador().getPosicionX());
+
+			int tecla = e.getKeyCode();
+			if(timer.isRunning()) {
+				if(tecla == KeyEvent.VK_LEFT) {
+					Juego.getInstancia().getJugador().moverseEjeX(-5);
+					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
+				} else if (tecla == KeyEvent.VK_RIGHT) {
+					Juego.getInstancia().getJugador().moverseEjeX(5);
+					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
+				} else if(tecla==KeyEvent.VK_SPACE) {
+					Juego.getInstancia().dispararJugador();
+					JLabel misil = new JLabel(new ImageIcon("misil.png"));
+					ListProy.add(misil);
+					c.add(misil);
+				}
+
 			}
-			if (tecla == KeyEvent.VK_RIGHT) {
-				Juego.getInstancia().getJugador().moverseEjeX(5);
-				naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
-				//System.out.println(Juego.getInstancia().getJugador().getPosicionX());
-			} 
-			if(tecla==KeyEvent.VK_SPACE) {
-				Juego.getInstancia().dispararJugador();
-				JLabel misil = new JLabel(new ImageIcon("misil.png"));
-				ListProy.add(misil);
-				c.add(misil);				
+
+			if (tecla == KeyEvent.VK_ESCAPE) {
+				if(timer.isRunning()) {
+					timer.stop();
+					menuPanel.setVisible(true);
+				}
+				else {
+					menuPanel.setVisible(false);
+					timer.start();
+				}
+				System.out.println("Juego terminado");
 			}
-			if (tecla == KeyEvent.VK_ESCAPE) System.out.println("Juego terminado");
+
 		}
 
 		@Override
@@ -211,6 +256,118 @@ public class ventana extends JFrame {
 			// TODO Auto-generated method stub
 			
 		}
+	}
+
+	public JPanel generarMenu() {
+		JPanel menuPanel = new JPanel(new BorderLayout());
+
+		int ancho = Juego.getInstancia().getAnchoPantalla() - Juego.getInstancia().getAnchoPantalla()/5;
+		int alto = Juego.getInstancia().getLargoPamtalla() - Juego.getInstancia().getLargoPamtalla()/5;
+
+		menuPanel.setBounds(Juego.getInstancia().getAnchoPantalla()/10, Juego.getInstancia().getLargoPamtalla()/10, ancho, alto);
+		menuPanel.setBackground(Color.white);
+		menuPanel.setVisible(false);
+
+		JButton botonJugar = crearBotonMenu("Continuar", ancho, alto);
+		botonJugar.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				timer.start();
+				menuPanel.setVisible(false);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+
+			}
+		});
+		menuPanel.add(botonJugar, BorderLayout.NORTH);
+
+		JButton botonExtra = crearBotonMenu("Extra", ancho, alto);
+		menuPanel.add(botonExtra, BorderLayout.CENTER);
+
+		JButton botonSalir = crearBotonMenu("Salir", ancho, alto);
+		botonSalir.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+				System.exit(0);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+
+			}
+		});
+		menuPanel.add(botonSalir, BorderLayout.SOUTH);
+
+
+
+		return menuPanel;
+	}
+
+	private JButton crearBotonMenu(String str, int alto, int ancho) {
+		JButton boton = new JButton(str);
+		//boton.setContentAreaFilled(false);
+		boton.setEnabled(false);
+		boton.setBackground(Color.black);
+		boton.setForeground(Color.white);
+		boton.setFont(new Font("OCR A Extended", Font.BOLD,14));
+		boton.setFocusPainted(false);
+		boton.setPreferredSize(new Dimension(ancho, alto/3));
+		boton.setBorder(new LineBorder(Color.white));
+		boton.setSelected(false);
+
+		boton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				boton.setBackground(Color.black);
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				boton.setBackground(Color.darkGray);
+			}
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(Color.darkGray);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(Color.black);
+			}
+		});
+
+		return boton;
+
 
 	}
 }

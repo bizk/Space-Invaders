@@ -13,8 +13,10 @@ import elementos.Proyectil;
 import grafico.ventana;
 import naves.Enemigo;
 import naves.Jugador;
+
+import valueobject.CampoDeFuerzaVO;
 import valueobject.HitBoxVO;
-import valueobject.ProyectilVO;;
+import valueobject.ProyectilVO;
 
 //
 //
@@ -48,18 +50,7 @@ public class Juego {
 		this.enemigoSpawnX = 4;
 		this.enemigoSpawnY = 26;
 	}
-	
-	//Revisar si va aca
-	// ###########################
-	/*public void movimientoJugador(String input) {
-		if("a".equals(input) && estaEnLaPantalla(jugador.getPosicionX()-1, jugador.getPosicionY())) {
-			jugador.setPosicionX(jugador.getPosicionX()-1);
-		} else if ("s".equals(input) && estaEnLaPantalla(jugador.getPosicionX()+1, jugador.getPosicionY())) {
-			jugador.setPosicionX(jugador.getPosicionX()+1);
-		}
-		System.out.println("[" + jugador.getPosicionX() + ":" + jugador.getPosicionY() + "]");
-	}*/
-	// ###########################
+
 
 	public void chequearImpactos() {
 			for(Proyectil tiro : listaProyectiles) {
@@ -100,7 +91,6 @@ public class Juego {
 			aux=(HitBox) itproy.next();
 			if(aux.isImpactada()) {
 				itproy.remove();
-				System.out.println("Proyectil Eliminado");
 			}
 		}
 		Iterator<Enemigo> itenem=enemigos.iterator();
@@ -108,7 +98,6 @@ public class Juego {
 			aux= (HitBox) itenem.next();
 			if(aux.isImpactada()) {
 				itenem.remove();
-				System.out.println("Nave enemiga Eliminado");
 			}
 		}
 		Iterator<CampoDeFuerza> itcamp =camposDeFuerza.iterator();
@@ -116,11 +105,11 @@ public class Juego {
 			aux=(HitBox) itcamp.next();
 			if(aux.isImpactada())
 				itcamp.remove();
-				//System.out.println("Campo Eliminado");
 		}
 		if(this.jugador.vidasRestantes()<=0) {
 			terminarJuego();
 		}
+
 	}
 
 	public void nuevoJuego() {
@@ -148,6 +137,8 @@ public class Juego {
 		
 		System.out.println("Termino el Juego");
 		System.out.println("Tu puntaje fue de: " + this.jugador.getPuntaje() + "pts");
+
+		//System.exit(1);
 	}
 	
 	/**
@@ -225,21 +216,25 @@ public class Juego {
  	* @Parametros:
  	*/
 	private void spawnCamposDeFuerza() {
-		int auxX = 40;
-		int auxY = this.largoPamtalla - 150;
-		
-		for (int i = 0; i < 7; i++) {
+
+		int auxX = (this.anchoPantalla - 32*5)/7;
+		int auxY = this.largoPamtalla - 175;
+
+		if(!camposDeFuerza.isEmpty()) camposDeFuerza.remove(camposDeFuerza);
+
+		for (int i = 0; i < 5; i++) {
 			CampoDeFuerza campo = new CampoDeFuerza(32, 32, auxX, auxY);
 			camposDeFuerza.add(campo);
-			auxX += 64;
+			auxX += (this.anchoPantalla)/6;
+
 		}
 	}
 
-	//###############################################
 	public void dispararJugador() {
 		listaProyectiles.add(jugador.disparar(-1));
+
 	}
-	//##############################################333
+
 	private Enemigo elegirEnemigo() {
 		int atr;
 		atr= (int) (Math.floor(Math.random() * enemigos.size()));
@@ -283,6 +278,7 @@ public class Juego {
 			aux.add(nave.getHBVO());
 		}
 		return aux;
+
 	}
 
 	public List<ProyectilVO>getListaProyectiles(){
@@ -292,6 +288,7 @@ public class Juego {
 		}
 		return aux;
 	}
+
 	
 	public Jugador getJugador() {
 		return this.jugador;
@@ -307,11 +304,20 @@ public class Juego {
 	
 	public int getDistancia_mov_enem() {
 		return distancia_mov_enem;
+
 	}
 
-	public List<CampoDeFuerza> getCampo() {
-		// TODO Auto-generated method stub
-		return this.camposDeFuerza;
+	public List<CampoDeFuerzaVO> getCampo() {
+		List<CampoDeFuerzaVO> auxVo = new ArrayList<CampoDeFuerzaVO>();
+		for(CampoDeFuerza campo : camposDeFuerza) {
+			auxVo.add(campo.getVO());
+		}
+		return auxVo;
+	}
+
+	public boolean hayCamposDeFuerza() {
+		if(!camposDeFuerza.isEmpty()) return true;
+		return false;
 	}
 
 	public void moverEnemigos() {
@@ -333,8 +339,12 @@ public class Juego {
 					enemigo.setPosicionY(enemigo.getPosicionY() + 36);}
 				else if(movimientoInverso) {
 					enemigo.setPosicionX(enemigo.getPosicionX() - distancia_mov_enem);			
-				} else {
+				}
+				else {
 					enemigo.setPosicionX(enemigo.getPosicionX() + distancia_mov_enem);
+				}
+				if(enemigo.getPosicionY() >= this.largoPamtalla - 175) {
+					camposDeFuerza.removeAll(camposDeFuerza);
 				}
 				if(enemigo.getPosicionY() >= jugador.getPosicionY()) {			//Si algun enemigo llega a la altura del jugador o menos se termina el juego
 					terminarJuego();
@@ -350,9 +360,8 @@ public class Juego {
 				//System.out.println("Hay un proyectil en la posicion X:"+ tiro.getPosicionX() + "Y:" +tiro.getPosicionY());
 				}
 			}
-		
-		
 	}
+
 
 	
 	public int getNivel() {
