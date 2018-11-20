@@ -13,9 +13,10 @@ import elementos.Proyectil;
 import grafico.ventana;
 import naves.Enemigo;
 import naves.Jugador;
+
 import valueobject.CampoDeFuerzaVO;
 import valueobject.HitBoxVO;
-import valueobject.ProyectilVO;;
+import valueobject.ProyectilVO;
 
 //
 //
@@ -49,6 +50,7 @@ public class Juego {
 		this.enemigoSpawnX = 4;
 		this.enemigoSpawnY = 26;
 	}
+
 
 	public void chequearImpactos() {
 			for(Proyectil tiro : listaProyectiles) {
@@ -107,6 +109,7 @@ public class Juego {
 		if(this.jugador.vidasRestantes()<=0) {
 			terminarJuego();
 		}
+
 	}
 
 	public void nuevoJuego() {
@@ -213,6 +216,7 @@ public class Juego {
  	* @Parametros:
  	*/
 	private void spawnCamposDeFuerza() {
+
 		int auxX = (this.anchoPantalla - 32*5)/7;
 		int auxY = this.largoPamtalla - 175;
 
@@ -222,11 +226,13 @@ public class Juego {
 			CampoDeFuerza campo = new CampoDeFuerza(32, 32, auxX, auxY);
 			camposDeFuerza.add(campo);
 			auxX += (this.anchoPantalla)/6;
+
 		}
 	}
 
 	public void dispararJugador() {
 		listaProyectiles.add(jugador.disparar(-1));
+
 	}
 
 	private Enemigo elegirEnemigo() {
@@ -272,6 +278,7 @@ public class Juego {
 			aux.add(nave.getHBVO());
 		}
 		return aux;
+
 	}
 
 	public List<ProyectilVO>getListaProyectiles(){
@@ -281,6 +288,7 @@ public class Juego {
 		}
 		return aux;
 	}
+
 	
 	public Jugador getJugador() {
 		return this.jugador;
@@ -296,6 +304,7 @@ public class Juego {
 	
 	public int getDistancia_mov_enem() {
 		return distancia_mov_enem;
+
 	}
 
 	public List<CampoDeFuerzaVO> getCampo() {
@@ -352,6 +361,7 @@ public class Juego {
 				}
 			}
 	}
+
 
 	
 	public int getNivel() {

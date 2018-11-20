@@ -1,5 +1,6 @@
 package valueobject;
 
+
 import elementos.HitBox;
 import valueobject.HitBoxVO;
 

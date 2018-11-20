@@ -1,7 +1,9 @@
 package grafico;
 
+
 import java.awt.*;
 import java.awt.event.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -11,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.*;
-
 import app.Juego;
 import elementos.CampoDeFuerza;
 import valueobject.CampoDeFuerzaVO;
@@ -38,8 +39,10 @@ public class ventana extends JFrame {
 	private JLabel puntaje;
 	private JLabel vidas;
 	private int randomizador=0;
+
 	private JPanel menuPanel;
 	private Timer timer;
+
 	
 	public ventana(){
 		c = this.getContentPane();
@@ -76,6 +79,7 @@ public class ventana extends JFrame {
 		}
 		
 		ListMuro= new ArrayList<JLabel>();
+
 		for(CampoDeFuerzaVO pared: Juego.getInstancia().getCampo()) {
 			JLabel muro = new JLabel(new ImageIcon ("muroMedio.png"));
 			muro.setBounds(pared.getPosicionX(), pared.getPosicionY(), pared.getAncho(), pared.getAlto());
@@ -205,9 +209,11 @@ public class ventana extends JFrame {
 		//this.add
 	}
 
+
 	class EventoTeclas implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+
 			int tecla = e.getKeyCode();
 			if(timer.isRunning()) {
 				if(tecla == KeyEvent.VK_LEFT) {
@@ -236,6 +242,7 @@ public class ventana extends JFrame {
 				}
 				System.out.println("Juego terminado");
 			}
+
 		}
 
 		@Override
@@ -249,7 +256,6 @@ public class ventana extends JFrame {
 			// TODO Auto-generated method stub
 			
 		}
-
 	}
 
 	public JPanel generarMenu() {
@@ -361,5 +367,7 @@ public class ventana extends JFrame {
 		});
 
 		return boton;
+
+
 	}
 }
