@@ -137,7 +137,6 @@ public class Juego {
 		
 		System.out.println("Termino el Juego");
 		System.out.println("Tu puntaje fue de: " + this.jugador.getPuntaje() + "pts");
-
 		//System.exit(1);
 	}
 	
@@ -220,7 +219,7 @@ public class Juego {
 		int auxX = (this.anchoPantalla - 32*5)/7;
 		int auxY = this.largoPamtalla - 175;
 
-		if(!camposDeFuerza.isEmpty()) camposDeFuerza.remove(camposDeFuerza);
+		if(!camposDeFuerza.isEmpty()) camposDeFuerza.clear();
 
 		for (int i = 0; i < 5; i++) {
 			CampoDeFuerza campo = new CampoDeFuerza(32, 32, auxX, auxY);
@@ -261,10 +260,6 @@ public class Juego {
 		} else {
 			return true;
 		}
-	}
-	
-	private void eliminarHitBox() {
-		
 	}
 	
 	public static Juego getInstancia() {
@@ -347,7 +342,7 @@ public class Juego {
 					camposDeFuerza.removeAll(camposDeFuerza);
 				}
 				if(enemigo.getPosicionY() >= jugador.getPosicionY()) {			//Si algun enemigo llega a la altura del jugador o menos se termina el juego
-					terminarJuego();
+				//	terminarJuego();
 					break;
 				}
 			}

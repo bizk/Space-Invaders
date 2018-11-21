@@ -135,30 +135,33 @@ public class ventana extends JFrame {
 				itproy.next().setVisible(false);
 			}
 
-			//Manejo de muros
-			if(Juego.getInstancia().hayCamposDeFuerza()){
-				Iterator<JLabel> itrMuro = ListMuro.iterator();
-				for (CampoDeFuerzaVO campo : Juego.getInstancia().getCampo()){
-					JLabel campoLabel = itrMuro.next();
-					campoLabel.setBounds(campo.getPosicionX() + 10, campo.getPosicionY(), campo.getAncho(), campo.getAlto());
-				 }
-				while(itrMuro.hasNext()){
-					itrMuro.next().setVisible(false);
-				}
+			//Manejo del dibujo de muros
+			Iterator<JLabel> itrMuro = ListMuro.iterator();
+			for (CampoDeFuerzaVO campo : Juego.getInstancia().getCampo()){
+				JLabel campoLabel = itrMuro.next();
+				campoLabel.setBounds(campo.getPosicionX() + 10, campo.getPosicionY(), campo.getAncho(), campo.getAlto());					campoLabel.setVisible(true);
 			}
+			while(itrMuro.hasNext()){
+				itrMuro.next().setVisible(false); 
+				}
+		
 
-			//Manejo de enemigos, movimiento y dibujar. Control del nuevo nivel.
+			//Manejo de enemigos, movimiento y dibujar. Control del nuevo nivel y juego terminado.
 			Juego.getInstancia().moverEnemigos();
 			if(Juego.getInstancia().hayEnemigos()) {
 				Iterator<JLabel> itr = enemigosJL.iterator();
 				for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
 					JLabel enemigoLabel = itr.next();
 					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
+					if(enemigo.getPosicionY()>=Juego.getInstancia().getJugador().getPosicionY()) {
+						JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Perdiste!", JOptionPane.INFORMATION_MESSAGE);
+						System.exit(0);
+					}
 				}
 				while(itr.hasNext()) {
 					itr.next().setVisible(false);
 				}
-			} else if(Juego.getInstancia().getNivel()<3){
+			} else if(Juego.getInstancia().getNivel()<3&&Juego.getInstancia().getJugador().vidasRestantes()>0){
 				Juego.getInstancia().siguienteNivel();
 
 				ListMuro.removeAll(ListMuro);
@@ -179,7 +182,10 @@ public class ventana extends JFrame {
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+				if(Juego.getInstancia().getJugador().vidasRestantes()>0)
+					JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Perdiste!", JOptionPane.INFORMATION_MESSAGE);
 				System.exit(0);
 			}
 
@@ -215,6 +221,7 @@ public class ventana extends JFrame {
 		// TODO Auto-generated method stub
 
 			int tecla = e.getKeyCode();
+			//Movimiento del jugador
 			if(timer.isRunning()) {
 				if(tecla == KeyEvent.VK_LEFT) {
 					Juego.getInstancia().getJugador().moverseEjeX(-5);
@@ -222,15 +229,10 @@ public class ventana extends JFrame {
 				} else if (tecla == KeyEvent.VK_RIGHT) {
 					Juego.getInstancia().getJugador().moverseEjeX(5);
 					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
-				} else if(tecla==KeyEvent.VK_SPACE) {
-					Juego.getInstancia().dispararJugador();
-					JLabel misil = new JLabel(new ImageIcon("misil.png"));
-					ListProy.add(misil);
-					c.add(misil);
 				}
 
 			}
-
+			//Pausa
 			if (tecla == KeyEvent.VK_ESCAPE) {
 				if(timer.isRunning()) {
 					timer.stop();
@@ -240,14 +242,21 @@ public class ventana extends JFrame {
 					menuPanel.setVisible(false);
 					timer.start();
 				}
-				System.out.println("Juego terminado");
+				System.out.println("Juego en pausa");
 			}
 
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
+			int tecla=e.getKeyCode(); 
+			//Disparo
+			if(tecla==KeyEvent.VK_SPACE) {
+				Juego.getInstancia().dispararJugador();
+				JLabel misil = new JLabel(new ImageIcon("misil.png"));
+				ListProy.add(misil);
+				c.add(misil);
+			}
 			
 		}
 
@@ -298,8 +307,8 @@ public class ventana extends JFrame {
 		});
 		menuPanel.add(botonJugar, BorderLayout.NORTH);
 
-		JButton botonExtra = crearBotonMenu("Extra", ancho, alto);
-		menuPanel.add(botonExtra, BorderLayout.CENTER);
+	/*	JButton botonExtra = crearBotonMenu("Extra", ancho, alto);
+		menuPanel.add(botonExtra, BorderLayout.CENTER);*/ 
 
 		JButton botonSalir = crearBotonMenu("Salir", ancho, alto);
 		botonSalir.addMouseListener(new MouseListener() {
