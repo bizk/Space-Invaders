@@ -40,9 +40,9 @@ public class ventana extends JFrame {
 	private JLabel vidas;
 	private int randomizador=0;
 
-	private JPanel menuPanel;
+	private JPanel menuPausa;
 	private Timer timer;
-
+	private JPanel menuInicio;
 	
 	public ventana(){
 		c = this.getContentPane();
@@ -53,11 +53,13 @@ public class ventana extends JFrame {
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		menuPanel = generarMenu();
-		c.add(menuPanel);
+		menuInicio= generarMenuInicio();
+		c.add(menuInicio);
+		menuPausa = generarMenuPausa();
+		c.add(menuPausa);
+		
+		
 
-		//Esto no va
-		jugar();
 	}
 	
 	public void jugar() {
@@ -101,7 +103,6 @@ public class ventana extends JFrame {
 		vidas=new JLabel();
 		vidas.setText("Vidas: "+ Juego.getInstancia().getJugador().vidasRestantes());
 		vidas.setFont(new Font("OCR A Extended", Font.BOLD,14));
-		vidas.setBounds(30, 570, 100, 30);
 		vidas.setForeground(Color.WHITE);
 		vidas.setVisible(true);
 		c.add(vidas);
@@ -192,6 +193,7 @@ public class ventana extends JFrame {
 			//Actualización del mensaje de puntaje y de vidas del jugador
 			puntaje.setText("Puntos: "+ Juego.getInstancia().getJugador().getPuntaje());
 			vidas.setText("Vidas: "+ Juego.getInstancia().getJugador().vidasRestantes());
+			vidas.setBounds(30, 570, 100, 30);
 			
 			//Manejo del disparo de los enemigos. Sólo disparan si logran aumentar al randomizador a más de 500.
 			if(randomizador > 100) {
@@ -236,10 +238,10 @@ public class ventana extends JFrame {
 			if (tecla == KeyEvent.VK_ESCAPE) {
 				if(timer.isRunning()) {
 					timer.stop();
-					menuPanel.setVisible(true);
+					menuPausa.setVisible(true);
 				}
 				else {
-					menuPanel.setVisible(false);
+					menuPausa.setVisible(false);
 					timer.start();
 				}
 				System.out.println("Juego en pausa");
@@ -267,8 +269,98 @@ public class ventana extends JFrame {
 		}
 	}
 
-	public JPanel generarMenu() {
-		JPanel menuPanel = new JPanel(new BorderLayout());
+	public JPanel generarMenuInicio() {
+		JPanel menuPanel = new JPanel(new GridLayout(2,1));
+
+		int ancho = Juego.getInstancia().getAnchoPantalla() - Juego.getInstancia().getAnchoPantalla()/5;
+		int alto = Juego.getInstancia().getLargoPamtalla() - Juego.getInstancia().getLargoPamtalla()/5;
+
+		menuPanel.setBounds(Juego.getInstancia().getAnchoPantalla()/10, Juego.getInstancia().getLargoPamtalla()/10, ancho, alto);
+		menuPanel.setBackground(Color.white);
+		menuPanel.setVisible(true);
+		
+	/*	JLabel logo = new JLabel();
+		ImageIcon imagen =new ImageIcon("Logo Inicio.png");
+		logo.setIcon(imagen);
+		logo.setVisible(true);
+		logo.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+		
+		menuPanel.add(logo); */
+		
+		JButton botonJugar = crearBotonMenu("Nuevo Juego", ancho, alto);
+		botonJugar.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				menuPanel.setVisible(false);
+				jugar();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		menuPanel.add(botonJugar);
+		
+		JButton botonSalir = crearBotonMenu("Salir", ancho, alto);
+		botonSalir.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int seleccion = JOptionPane.showOptionDialog(c, "Estas seguro que deseas salir?", "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,"NO");
+				if(seleccion==0) System.exit(0);
+				else ;
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+
+			}
+		});
+		menuPanel.add(botonSalir);
+
+		
+		
+		return menuPanel;
+	}
+	
+	public JPanel generarMenuPausa() {
+		JPanel menuPanel = new JPanel(new GridLayout(3,1));
 
 		int ancho = Juego.getInstancia().getAnchoPantalla() - Juego.getInstancia().getAnchoPantalla()/5;
 		int alto = Juego.getInstancia().getLargoPamtalla() - Juego.getInstancia().getLargoPamtalla()/5;
@@ -277,6 +369,14 @@ public class ventana extends JFrame {
 		menuPanel.setBackground(Color.white);
 		menuPanel.setVisible(false);
 
+		JLabel logo = new JLabel();
+		ImageIcon imagen =new ImageIcon("Logo Pausa.png");
+		logo.setIcon(imagen);
+		logo.setBounds(0, 0, ancho, alto);
+		logo.setVisible(true);
+		logo.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+		menuPanel.add(logo);
+		
 		JButton botonJugar = crearBotonMenu("Continuar", ancho, alto);
 		botonJugar.addMouseListener(new MouseListener() {
 			@Override
@@ -305,10 +405,8 @@ public class ventana extends JFrame {
 
 			}
 		});
-		menuPanel.add(botonJugar, BorderLayout.NORTH);
-
-	/*	JButton botonExtra = crearBotonMenu("Extra", ancho, alto);
-		menuPanel.add(botonExtra, BorderLayout.CENTER);*/ 
+		menuPanel.add(botonJugar);
+		
 
 		JButton botonSalir = crearBotonMenu("Salir", ancho, alto);
 		botonSalir.addMouseListener(new MouseListener() {
@@ -338,7 +436,7 @@ public class ventana extends JFrame {
 
 			}
 		});
-		menuPanel.add(botonSalir, BorderLayout.SOUTH);
+		menuPanel.add(botonSalir);
 
 
 
