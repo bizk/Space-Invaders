@@ -226,10 +226,10 @@ public class ventana extends JFrame {
 			//Movimiento del jugador
 			if(timer.isRunning()) {
 				if(tecla == KeyEvent.VK_LEFT) {
-					Juego.getInstancia().getJugador().moverseEjeX(-5);
+					Juego.getInstancia().moverJugadorIzq();
 					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
 				} else if (tecla == KeyEvent.VK_RIGHT) {
-					Juego.getInstancia().getJugador().moverseEjeX(5);
+					Juego.getInstancia().moverJugadorDer();
 					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
 				}
 

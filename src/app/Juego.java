@@ -16,6 +16,7 @@ import naves.Jugador;
 
 import valueobject.CampoDeFuerzaVO;
 import valueobject.HitBoxVO;
+import valueobject.JugadorVO;
 import valueobject.ProyectilVO;
 
 //
@@ -156,11 +157,11 @@ public class Juego {
 	}
 	
 	public void moverJugadorIzq() {
-		jugador.moverseEjeX(-1);
+		jugador.moverseEjeX(-5);
 	}
 
 	public void moverJugadorDer() {
-		jugador.moverseEjeX(1);
+		jugador.moverseEjeX(5);
 	}
 	
 	/**
@@ -285,8 +286,8 @@ public class Juego {
 	}
 
 	
-	public Jugador getJugador() {
-		return this.jugador;
+	public JugadorVO getJugador() {
+		return this.jugador.getJugadorVO();
 	}
 
 	public int getAnchoPantalla() {
