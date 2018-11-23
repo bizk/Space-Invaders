@@ -1,7 +1,6 @@
 package valueobject;
 
 
-import elementos.HitBox;
 import valueobject.HitBoxVO;
 
 public class CampoDeFuerzaVO extends HitBoxVO {

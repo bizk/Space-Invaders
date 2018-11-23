@@ -1,11 +1,7 @@
 package app;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.*;
 
 import elementos.CampoDeFuerza;
 import elementos.HitBox;
@@ -16,6 +12,7 @@ import naves.Jugador;
 
 import valueobject.CampoDeFuerzaVO;
 import valueobject.HitBoxVO;
+import valueobject.JugadorVO;
 import valueobject.ProyectilVO;
 
 //
@@ -44,14 +41,91 @@ public class Juego {
 	
 	private static Juego instancia;
 	
+	/**
+ 	* @Funcion: getInstancia
+ 	* @Descripcion: Función que responde al carácter de Singleton del controlador.
+ 	* @Devuelve: objeto único de la clase Juego
+ 	* @Parametros: ninguno
+ 	*/
+	public static Juego getInstancia() {
+		if(instancia == null) instancia = new Juego();
+		return instancia;
+	}
+	
+	/**
+ 	* @Funcion: Juego
+ 	* @Descripcion: constructor privado del controlador, inicializa las variables necesarias para el funcionamiento del controlador
+ 	* @Devuelve: objeto de la clase Juego
+ 	* @Parametros: ninguno
+ 	*/
 	private Juego() {
 		this.anchoPantalla = 500 ;
 		this.largoPamtalla = 644;
 		this.enemigoSpawnX = 4;
 		this.enemigoSpawnY = 26;
+		
 	}
 
+	/**
+ 	* @Funcion: nuevoJuego
+ 	* @Descripcion: inicia todos los elementos necesarios para jugar e inicia la ventana
+  	* @Devuelve: nada
+ 	* @Parametros: ninguno
+ 	*/
+	public void nuevoJuego() {
+		this.jugador = new Jugador(0, 0);
+		enemigos = new ArrayList<Enemigo>();
+		camposDeFuerza = new ArrayList<CampoDeFuerza>();
+		listaProyectiles = new ArrayList<Proyectil>();
+		spawnEnemigos();
+		spawnCamposDeFuerza();
+		jugador.spawn(this.anchoPantalla/2 - 100, this.largoPamtalla - 100);
+		this.distancia_mov_enem = 2;
+		nivel=1;
+		
+		ventana v = new ventana();
+		
+	}
 
+	/**
+ 	* @Funcion: terminarJuego
+ 	* @Descripcion: Limpia todas las listas del controlador, muestra por consola que terminó el juego.
+  	* @Devuelve: nada
+ 	* @Parametros: ninguno
+ 	*/
+	public void terminarJuego() {
+		//Elimina los enemigos y campos de fuerza
+		enemigos.clear();
+		camposDeFuerza.clear();
+
+		listaProyectiles.clear();
+		
+		System.out.println("Termino el Juego");
+		System.out.println("Tu puntaje fue de: " + this.jugador.getPuntaje() + "pts");
+
+	}
+	
+	/**
+ 	* @Funcion: siguienteNivel
+ 	* @Descripcion: pasa al siguiente nivel, respawnea  a los enemigos y campos de fuerza y le da el respectivo puntaje al jugador
+ 	* @Devuelve:
+ 	* @Parametros:
+ 	*/
+	public void siguienteNivel() {
+		this.nivel++;
+		this.distancia_mov_enem+=2;
+		spawnEnemigos();
+		spawnCamposDeFuerza();
+		jugador.recibirPuntos(200);
+		listaProyectiles.clear();
+	}
+	
+	/**
+ 	* @Funcion: chequearImpactos
+ 	* @Descripcion: Verifica las posiciciones de los proyectiles contra la del resto de los elementos. Marca las que tienen encuentro y realiza las acciones correspondientes
+  	* @Devuelve: nada
+ 	* @Parametros: ninguno
+ 	*/
 	public void chequearImpactos() {
 			for(Proyectil tiro : listaProyectiles) {
 				if(tiro.getPosicionY()<=0|| tiro.getPosicionY()>=644)
@@ -69,7 +143,10 @@ public class Juego {
 			if(!tiro.isImpactada()) {
 				for(CampoDeFuerza muro : camposDeFuerza) {
 					if(!tiro.isImpactada()&&muro.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())){
-						muro.serDanado(10);
+						if(tiro.getDireccion()<0)
+								muro.serDanado(10);
+						else
+							muro.serDanado(5);
 						tiro.setImpactada(true);
 						System.out.println("Muro Impactado");
     	}
@@ -83,8 +160,13 @@ public class Juego {
 			}
 		}
 
+	/**
+ 	* @Funcion: eliminarImpactados
+ 	* @Descripcion: Verifica las listas de elementos en busca de los que fueron marcados por chequearImpactos y los remueve de las listas
+  	* @Devuelve: nada
+ 	* @Parametros: ninguno
+ 	*/
 	public void eliminarImpactados() {
-		// TODO Auto-generated method stub
 		Iterator<Proyectil> itproy=listaProyectiles.iterator();
 		HitBox aux;
 		while(itproy.hasNext()){
@@ -112,55 +194,24 @@ public class Juego {
 
 	}
 
-	public void nuevoJuego() {
-		this.jugador = new Jugador(0, 0);
-		enemigos = new ArrayList<Enemigo>();
-		camposDeFuerza = new ArrayList<CampoDeFuerza>();
-		//listaColisiones = new ArrayList<HitBox>();
-		listaProyectiles = new ArrayList<Proyectil>();
-		spawnEnemigos();
-		spawnCamposDeFuerza();
-		jugador.spawn(this.anchoPantalla/2 - 100, this.largoPamtalla - 100);
-		this.distancia_mov_enem = 2;
-		nivel=1;
-		
-		ventana v = new ventana();
-		
-	}
-
-	public void terminarJuego() {
-		//Elimina los enemigos y campos de fuerza
-		enemigos.clear();
-		camposDeFuerza.clear();
-	//	listaColisiones.clear();
-		listaProyectiles.clear();
-		
-		System.out.println("Termino el Juego");
-		System.out.println("Tu puntaje fue de: " + this.jugador.getPuntaje() + "pts");
-		//System.exit(1);
-	}
-	
 	/**
- 	* @Funcion: siguienteNivel
- 	* @Descripcion: pasa al siguiente nivel, respawnea  a los enemigos y campos de fuerza y le da el respectivo puntaje al jugador
- 	* @Devuelve:
- 	* @Parametros:
+ 	* @Funcion: moverJugadorIzq
+ 	* @Descripcion: pide al objeto Jugador que se mueva 5 pixeles a la izquierda
+  	* @Devuelve: nada
+ 	* @Parametros: ninguno
  	*/
-	public void siguienteNivel() {
-		this.nivel++;
-		this.distancia_mov_enem+=2;
-		spawnEnemigos();
-		spawnCamposDeFuerza();
-		jugador.recibirPuntos(500);
-		listaProyectiles.clear();
-	}
-	
 	public void moverJugadorIzq() {
-		jugador.moverseEjeX(-1);
+		jugador.moverseEjeX(-5);
 	}
 
+	/**
+ 	* @Funcion: moverJugadorDer
+ 	* @Descripcion: pide al objeto Jugador que se mueva 5 pixeles a la derecha
+  	* @Devuelve: nada
+ 	* @Parametros: ninguno
+ 	*/
 	public void moverJugadorDer() {
-		jugador.moverseEjeX(1);
+		jugador.moverseEjeX(5);
 	}
 	
 	/**
@@ -178,7 +229,7 @@ public class Juego {
 	
 	/**
  	* @Funcion: spawnEnemigos
- 	* @Descripcion: Crea y ubica 15 enemigos en el mapa.
+ 	* @Descripcion: Crea y ubica 15 enemigos en el area de juego.
  	* @Devuelve:
  	* @Parametros:
  	*/
@@ -209,8 +260,8 @@ public class Juego {
 	}
 
 	/**
- 	* @Funcion: SpawnCamposDeFuerza
- 	* @Descripcion: Crea y ubica los campos de fuerza
+ 	* @Funcion: spawnCamposDeFuerza
+ 	* @Descripcion: Crea y ubica los campos de fuerza en el area de juego
  	* @Devuelve: 
  	* @Parametros:
  	*/
@@ -229,11 +280,23 @@ public class Juego {
 		}
 	}
 
+	/**
+ 	* @Funcion: dispararJugador
+ 	* @Descripcion: Pide al objeto jugador que cree un proyectil y lo agrega a la lista de proyectiles
+ 	* @Devuelve: 
+ 	* @Parametros:
+ 	*/
 	public void dispararJugador() {
 		listaProyectiles.add(jugador.disparar(-1));
 
 	}
 
+	/**
+ 	* @Funcion: elegirEnemigo
+ 	* @Descripcion: Elige una nave de la lista de Enemigos aleatorea, que esté en la primera fila
+ 	* @Devuelve: Enemigo
+ 	* @Parametros:
+ 	*/
 	private Enemigo elegirEnemigo() {
 		int atr;
 		atr= (int) (Math.floor(Math.random() * enemigos.size()));
@@ -248,25 +311,24 @@ public class Juego {
 		
 	}
 
+	/**
+ 	* @Funcion: dispararEnemigo
+ 	* @Descripcion: Pide al objeto enemigo devuelto por elegirEnemigo que cree un proyectil y lo agrega a la lista de proyectiles
+ 	* @Devuelve: 
+ 	* @Parametros:
+ 	*/
 	public void dispararEnemigo() {
 		Enemigo aux= elegirEnemigo();
 		listaProyectiles.add(aux.disparar(1));
 		
 	}
 	
-	public boolean hayEnemigos() {
-		if(enemigos.isEmpty()) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	public static Juego getInstancia() {
-		if(instancia == null) instancia = new Juego();
-		return instancia;
-	}
-	
+	/**
+ 	* @Funcion: getEnemigos
+ 	* @Descripcion: Recorre la lista de naves Enemigas para que generen sus ViewObjects y puedan ser devueltos a la ventana
+ 	* @Devuelve: List<HitBoxVO>
+ 	* @Parametros:
+ 	*/
 	public List<HitBoxVO> getEnemigos() {
 		List<HitBoxVO> aux = new ArrayList<HitBoxVO>();
 		for(Enemigo nave : enemigos) {
@@ -276,6 +338,12 @@ public class Juego {
 
 	}
 
+	/**
+ 	* @Funcion: getListaProyectiles
+ 	* @Descripcion: Recorre la lista de proyectiles en el area de juego para que generen sus ViewObjects y puedan ser devueltos a la ventana
+ 	* @Devuelve: List<ProyectilVO>
+ 	* @Parametros:
+ 	*/
 	public List<ProyectilVO>getListaProyectiles(){
 		List<ProyectilVO>aux=new ArrayList<ProyectilVO>();
 		for(Proyectil proyect: listaProyectiles) {
@@ -284,24 +352,23 @@ public class Juego {
 		return aux;
 	}
 
+	/**
+ 	* @Funcion: getJugador
+ 	* @Descripcion: Pide al objeto Jugador que genere su View Object y pueda ser devuelto a la ventana
+ 	* @Devuelve: JugadorVO
+ 	* @Parametros:
+ 	*/
+	public JugadorVO getJugador() {
+		return this.jugador.getJugadorVO();
+	}
+
 	
-	public Jugador getJugador() {
-		return this.jugador;
-	}
-
-	public int getAnchoPantalla() {
-		return anchoPantalla;
-	}
-
-	public int getLargoPamtalla() {
-		return largoPamtalla;
-	}
-	
-	public int getDistancia_mov_enem() {
-		return distancia_mov_enem;
-
-	}
-
+	/**
+ 	* @Funcion: getCampo
+ 	* @Descripcion: Recorre la lista de Campos de Fuerza para que generen sus ViewObjects y puedan ser devueltos a la ventana
+ 	* @Devuelve: List<CampoDeFuerzaVO>
+ 	* @Parametros:
+ 	*/
 	public List<CampoDeFuerzaVO> getCampo() {
 		List<CampoDeFuerzaVO> auxVo = new ArrayList<CampoDeFuerzaVO>();
 		for(CampoDeFuerza campo : camposDeFuerza) {
@@ -310,11 +377,68 @@ public class Juego {
 		return auxVo;
 	}
 
+	/**
+ 	* @Funcion: getAnchoPantalla
+ 	* @Descripcion: Devuelve el valor almacenado en anchoPantalla
+ 	* @Devuelve: Integer
+ 	* @Parametros:
+ 	*/
+	public int getAnchoPantalla() {
+		return anchoPantalla;
+	}
+
+	/**
+ 	* @Funcion: getLargoPamtalla
+ 	* @Descripcion: Devuelve el valor almacenado en largoPamtalla
+ 	* @Devuelve: Integer
+ 	* @Parametros:
+ 	*/
+	public int getLargoPamtalla() {
+		return largoPamtalla;
+	}
+	
+	/**
+ 	* @Funcion: getDistancia_mov_enem
+ 	* @Descripcion: Devuelve el valor almacenado en distancia_mov_enem
+ 	* @Devuelve: Integer
+ 	* @Parametros:
+ 	*/
+	public int getDistancia_mov_enem() {
+		return distancia_mov_enem;
+
+	}
+
+	/**
+ 	* @Funcion: hayCamposDeFuerza
+ 	* @Descripcion: Devuelve un booleano que es verdadero si hay elementos en la lista camposDeFuerza o falso si no los hay
+ 	* @Devuelve: boolean
+ 	* @Parametros:
+ 	*/
 	public boolean hayCamposDeFuerza() {
 		if(!camposDeFuerza.isEmpty()) return true;
 		return false;
 	}
 
+	/**
+ 	* @Funcion: hayEnemigos
+ 	* @Descripcion: Devuelve un booleano que es verdadero si hay elementos en la lista enemigos o falso si no los hay
+ 	* @Devuelve: boolean
+ 	* @Parametros:
+ 	*/
+	public boolean hayEnemigos() {
+		if(enemigos.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	/**
+ 	* @Funcion: moverEnemigos
+ 	* @Descripcion: Recorre la lista de enemigos y modifica los valores de posicion de los elementos que contiene según corresponda 
+ 	* @Devuelve: 
+ 	* @Parametros:
+ 	*/
 	public void moverEnemigos() {
 		boolean chocaPared = false;
 		
@@ -348,6 +472,12 @@ public class Juego {
 			}
 	}
 	
+	/**
+ 	* @Funcion: moverProyectiles
+ 	* @Descripcion: Recorre la lista de proyectiles y modifica los valores de posicion de los elementos que contiene según corresponda 
+ 	* @Devuelve: 
+ 	* @Parametros:
+ 	*/
 	public void moverProyectiles() {
 		for(Proyectil tiro: listaProyectiles) {
 			if(tiro.getPosicionY()>0&&tiro.getPosicionY()<644) {
@@ -357,11 +487,25 @@ public class Juego {
 			}
 	}
 
-
-	
+	/**
+ 	* @Funcion: getNivel
+ 	* @Descripcion: Devuelve el valor almacenado en la variable Nivel
+ 	* @Devuelve: Integer
+ 	* @Parametros:
+ 	*/
 	public int getNivel() {
-		// TODO Auto-generated method stub
 		return nivel;
+	}
+
+	/**
+ 	* @Funcion: darVidaJugador()
+ 	* @Descripcion: Pide al objeto jugador que aumente la cantidad de vidas almacenadas
+ 	* @Devuelve: 
+ 	* @Parametros:
+ 	*/
+	public void darVidaJugador() {
+		this.jugador.darVida();
+		
 	}
 
 	

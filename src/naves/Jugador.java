@@ -11,6 +11,7 @@ package naves;
 //
 
 import app.Juego;
+import valueobject.JugadorVO;
 
 public class Jugador extends Nave {
 	private int puntaje;
@@ -58,6 +59,13 @@ public class Jugador extends Nave {
 	public void setPuntaje(int puntaje) {
 		this.puntaje = puntaje;
 	}
+	public JugadorVO getJugadorVO(){
+		return(new JugadorVO(this.getPosicionX(),this.getPosicionY(), this.puntaje,this.vida));
+		}
 
+	public void darVida() {
+		this.vida+=1;
+		
+	}
 
 }

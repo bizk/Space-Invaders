@@ -1,7 +1,5 @@
 package valueobject;
 
-import elementos.HitBox;
-import valueobject.HitBoxVO;
 
 public class ProyectilVO extends HitBoxVO {
 	private int velocidadProyectil;
