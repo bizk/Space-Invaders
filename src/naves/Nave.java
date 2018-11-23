@@ -1,5 +1,4 @@
 package naves;
-import app.Juego;
 import elementos.HitBox;
 import elementos.Proyectil;
 

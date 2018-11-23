@@ -1,6 +1,5 @@
 package elementos;
 
-import valueobject.HitBoxVO;
 import valueobject.ProyectilVO;
 //
 //

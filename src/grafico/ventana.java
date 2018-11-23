@@ -12,25 +12,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.border.LineBorder;
 import javax.swing.*;
 import app.Juego;
-import elementos.CampoDeFuerza;
 import valueobject.CampoDeFuerzaVO;
 import valueobject.HitBoxVO;
 import valueobject.ProyectilVO;
 
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.ColorUIResource;
+
+
 
 public class ventana extends JFrame {
-	//private JButton btndos, btnuno, btntres;
-	//private JTextField txtMensaje;
 	
-	private JLabel naveEnemiga1;
-	private JLabel naveEnemiga2;
-	private JLabel naveEnemiga3;
 	private JLabel naveJugador;
 	private Container c;
 	private ArrayList<JLabel> enemigosJL;
@@ -39,7 +32,8 @@ public class ventana extends JFrame {
 	private JLabel puntaje;
 	private JLabel vidas;
 	private int randomizador=0;
-
+	private int ctrlpunto=0;
+	
 	private JPanel menuPausa;
 	private Timer timer;
 	private JPanel menuInicio;
@@ -58,7 +52,7 @@ public class ventana extends JFrame {
 		menuPausa = generarMenuPausa();
 		c.add(menuPausa);
 		
-		
+		c.paintComponents(c.getGraphics());//Dibuja por primera vez las cosas
 
 	}
 	
@@ -174,7 +168,7 @@ public class ventana extends JFrame {
 					c.add(muro);
 				}
 
-				JOptionPane.showMessageDialog(null, "Has ganado 500 puntos. Continuas?", "Has pasado de nivel!", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Has ganado 200  puntos. Continuas?", "Has pasado de nivel!", JOptionPane.WARNING_MESSAGE);
 				Iterator<JLabel> itr = enemigosJL.iterator();
 				for (HitBoxVO enemigo : Juego.getInstancia().getEnemigos()) {
 					JLabel enemigoLabel = itr.next();
@@ -206,6 +200,13 @@ public class ventana extends JFrame {
 			else {
 				randomizador= randomizador + (int) (Math.random()*Juego.getInstancia().getDistancia_mov_enem())+1;
 			}
+			
+			//Aumento de vidas cada 500 puntos
+			if(Juego.getInstancia().getJugador().getPuntaje() - ctrlpunto >=500) {
+				ctrlpunto=Juego.getInstancia().getJugador().getPuntaje();
+				Juego.getInstancia().darVidaJugador();
+			}
+			
 		
 		}
 
@@ -226,10 +227,10 @@ public class ventana extends JFrame {
 			//Movimiento del jugador
 			if(timer.isRunning()) {
 				if(tecla == KeyEvent.VK_LEFT) {
-					Juego.getInstancia().getJugador().moverseEjeX(-5);
+					Juego.getInstancia().moverJugadorIzq();
 					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
 				} else if (tecla == KeyEvent.VK_RIGHT) {
-					Juego.getInstancia().getJugador().moverseEjeX(5);
+					Juego.getInstancia().moverJugadorDer();
 					naveJugador.setBounds(Juego.getInstancia().getJugador().getPosicionX(), Juego.getInstancia().getJugador().getPosicionY(), 32, 32);
 				}
 
@@ -270,7 +271,7 @@ public class ventana extends JFrame {
 	}
 
 	public JPanel generarMenuInicio() {
-		JPanel menuPanel = new JPanel(new GridLayout(2,1));
+		JPanel menuPanel = new JPanel(new GridLayout(3,1));
 
 		int ancho = Juego.getInstancia().getAnchoPantalla() - Juego.getInstancia().getAnchoPantalla()/5;
 		int alto = Juego.getInstancia().getLargoPamtalla() - Juego.getInstancia().getLargoPamtalla()/5;
@@ -278,14 +279,12 @@ public class ventana extends JFrame {
 		menuPanel.setBounds(Juego.getInstancia().getAnchoPantalla()/10, Juego.getInstancia().getLargoPamtalla()/10, ancho, alto);
 		menuPanel.setBackground(Color.white);
 		menuPanel.setVisible(true);
-		
-	/*	JLabel logo = new JLabel();
+	
+		JLabel logo = new JLabel();
 		ImageIcon imagen =new ImageIcon("Logo Inicio.png");
 		logo.setIcon(imagen);
 		logo.setVisible(true);
-		logo.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-		
-		menuPanel.add(logo); */
+		menuPanel.add(logo); 
 		
 		JButton botonJugar = crearBotonMenu("Nuevo Juego", ancho, alto);
 		botonJugar.addMouseListener(new MouseListener() {
@@ -445,7 +444,6 @@ public class ventana extends JFrame {
 
 	private JButton crearBotonMenu(String str, int alto, int ancho) {
 		JButton boton = new JButton(str);
-		//boton.setContentAreaFilled(false);
 		boton.setEnabled(false);
 		boton.setBackground(Color.black);
 		boton.setForeground(Color.white);
