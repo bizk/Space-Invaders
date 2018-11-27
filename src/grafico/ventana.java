@@ -138,7 +138,7 @@ public class ventana extends JFrame {
 			}
 			while(itrMuro.hasNext()){
 				itrMuro.next().setVisible(false); 
-				}
+			}
 		
 
 			//Manejo de enemigos, movimiento y dibujar. Control del nuevo nivel y juego terminado.
@@ -150,6 +150,7 @@ public class ventana extends JFrame {
 					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
 					if(enemigo.getPosicionY()>=Juego.getInstancia().getJugador().getPosicionY()) {
 						JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Perdiste!", JOptionPane.INFORMATION_MESSAGE);
+						Juego.getInstancia().terminarJuego();
 						System.exit(0);
 					}
 				}
@@ -175,13 +176,17 @@ public class ventana extends JFrame {
 					enemigoLabel.setBounds(enemigo.getPosicionX(), enemigo.getPosicionY(), 32, 32);
 					enemigoLabel.setVisible(true);
 				}
-			}
-			else {
+			} else {
 				if(Juego.getInstancia().getJugador().vidasRestantes()>0)
 					JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Ganaste!", JOptionPane.INFORMATION_MESSAGE);
 				else
 					JOptionPane.showMessageDialog(c, "Tu puntaje final es de " + Juego.getInstancia().getJugador().getPuntaje() + "puntos", "Perdiste!", JOptionPane.INFORMATION_MESSAGE);
-				System.exit(0);
+				Juego.getInstancia().terminarJuego();
+				timer.stop();
+				Juego.getInstancia().nuevoJuego();
+				menuInicio.setVisible(true);
+				//
+				// System.exit(0);
 			}
 
 			//Actualización del mensaje de puntaje y de vidas del jugador
@@ -353,8 +358,6 @@ public class ventana extends JFrame {
 		});
 		menuPanel.add(botonSalir);
 
-		
-		
 		return menuPanel;
 	}
 	

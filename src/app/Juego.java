@@ -43,8 +43,8 @@ public class Juego {
 	
 	/**
  	* @Funcion: getInstancia
- 	* @Descripcion: Función que responde al carácter de Singleton del controlador.
- 	* @Devuelve: objeto único de la clase Juego
+ 	* @Descripcion: Funciï¿½n que responde al carï¿½cter de Singleton del controlador.
+ 	* @Devuelve: objeto ï¿½nico de la clase Juego
  	* @Parametros: ninguno
  	*/
 	public static Juego getInstancia() {
@@ -89,7 +89,7 @@ public class Juego {
 
 	/**
  	* @Funcion: terminarJuego
- 	* @Descripcion: Limpia todas las listas del controlador, muestra por consola que terminó el juego.
+ 	* @Descripcion: Limpia todas las listas del controlador, muestra por consola que terminï¿½ el juego.
   	* @Devuelve: nada
  	* @Parametros: ninguno
  	*/
@@ -136,7 +136,7 @@ public class Juego {
 							enem.setImpactada(true);
 							tiro.setImpactada(true);
 							enem.darPuntos(this.jugador);
-							System.out.println("Enemigo impactado");
+						//	System.out.println("Enemigo impactado");
 						}
 					}
 				}
@@ -148,14 +148,14 @@ public class Juego {
 						else
 							muro.serDanado(5);
 						tiro.setImpactada(true);
-						System.out.println("Muro Impactado");
-    	}
+					//	System.out.println("Muro Impactado");
+    				}
 				}
 			}
 				if(!tiro.isImpactada()&&jugador.estaTocando(tiro.getPosicionX(), tiro.getPosicionY())) {
 					jugador.restarVida();
 					tiro.setImpactada(true);
-					System.out.println("JugadorImpactado");
+					//System.out.println("JugadorImpactado");
 				}
 			}
 		}
@@ -293,7 +293,7 @@ public class Juego {
 
 	/**
  	* @Funcion: elegirEnemigo
- 	* @Descripcion: Elige una nave de la lista de Enemigos aleatorea, que esté en la primera fila
+ 	* @Descripcion: Elige una nave de la lista de Enemigos aleatorea, que estï¿½ en la primera fila
  	* @Devuelve: Enemigo
  	* @Parametros:
  	*/
@@ -301,8 +301,8 @@ public class Juego {
 		int atr;
 		atr= (int) (Math.floor(Math.random() * enemigos.size()));
 		Enemigo aux= enemigos.get(atr);
-		System.out.println("Hay " +enemigos.size() + "naves ");
-		System.out.println("Intenta nave: " +atr);
+	//	System.out.println("Hay " +enemigos.size() + "naves ");
+	//	System.out.println("Intenta nave: " +atr);
 		for(Enemigo enem : enemigos) {
 			if(aux.getPosicionY()<enem.getPosicionY())
 				atr++;
@@ -435,7 +435,7 @@ public class Juego {
 	
 	/**
  	* @Funcion: moverEnemigos
- 	* @Descripcion: Recorre la lista de enemigos y modifica los valores de posicion de los elementos que contiene según corresponda 
+ 	* @Descripcion: Recorre la lista de enemigos y modifica los valores de posicion de los elementos que contiene segï¿½n corresponda 
  	* @Devuelve: 
  	* @Parametros:
  	*/
@@ -474,7 +474,7 @@ public class Juego {
 	
 	/**
  	* @Funcion: moverProyectiles
- 	* @Descripcion: Recorre la lista de proyectiles y modifica los valores de posicion de los elementos que contiene según corresponda 
+ 	* @Descripcion: Recorre la lista de proyectiles y modifica los valores de posicion de los elementos que contiene segï¿½n corresponda 
  	* @Devuelve: 
  	* @Parametros:
  	*/
